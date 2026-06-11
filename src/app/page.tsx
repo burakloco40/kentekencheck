@@ -30,7 +30,6 @@ export default function HomePage() {
           </div>
         </div>
       </section>
-
       <section style={{maxWidth:'1000px',margin:'0 auto',padding:'60px 16px'}}>
         <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fill,minmax(280px,1fr))',gap:'20px'}}>
           {[
@@ -48,7 +47,6 @@ export default function HomePage() {
           ))}
         </div>
       </section>
-
       <section style={{maxWidth:'1000px',margin:'0 auto',padding:'0 16px 60px'}}>
         <div style={{background:'white',border:'1px solid #e5e7eb',borderRadius:'16px',padding:'32px'}}>
           <h2 style={{fontSize:'20px',fontWeight:700,color:'#0f2040',marginBottom:'12px',margin:'0 0 12px'}}>Hoe werkt het?</h2>

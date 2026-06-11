@@ -12,21 +12,26 @@
   /^[A-Z]{3}\d{2}[A-Z]{1}$/,
   /^[A-Z]{1}\d{2}[A-Z]{3}$/,
 ];
+
 export function normalizePlate(input: string): string {
   return input.toUpperCase().replace(/[-\s]/g, "");
 }
+
 export function isValidPlate(input: string): boolean {
   const normalized = normalizePlate(input);
   if (normalized.length < 4 || normalized.length > 8) return false;
   return PLATE_PATTERNS.some((p) => p.test(normalized));
 }
-export function formatPlateDisplay(raw: string): string {
+
+export function formatPlateDisplay(raw: string | undefined | null): string {
+  if (!raw) return "";
   const n = normalizePlate(raw);
   for (let i = 0; i < PLATE_PATTERNS.length; i++) {
     if (PLATE_PATTERNS[i].test(n)) return formatBySidecode(n, i + 1);
   }
   return n;
 }
+
 function formatBySidecode(plate: string, sc: number): string {
   switch (sc) {
     case 1: case 2: case 3: case 4: case 5: case 6:
