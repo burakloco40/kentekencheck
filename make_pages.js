@@ -1,0 +1,1 @@
+const fs=require('fs');fs.writeFileSync('make_pages_content.js','');

@@ -1,0 +1,28 @@
+const fs = require('fs'); 
+fs.writeFileSync('src/app/globals.css', [ 
+'@import "tailwindcss";', 
+'@import url("https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600&family=Courier+Prime:wght@400;700&display=swap");', 
+'', 
+'@theme {', 
+'  --color-navy-600: #162d58;', 
+'  --color-navy-700: #0f2040;', 
+'  --color-navy-500: #1e3a6e;', 
+'  --color-plate-yellow: #F5C518;', 
+'  --color-plate-dark: #D4A017;', 
+'  --color-surface-border: #e5e9f2;', 
+'  --shadow-card: 0 1px 3px 0 rgb(0 0 0 / 0.08);', 
+'  --shadow-plate: inset 0 2px 4px rgb(0 0 0 / 0.15), 0 2px 8px rgb(0 0 0 / 0.12);', 
+'}', 
+'', 
+'@keyframes fadeIn { 0% { opacity: 0; } 100% { opacity: 1; } }', 
+'@keyframes slideUp { 0% { opacity: 0; transform: translateY(12px); } 100% { opacity: 1; transform: translateY(0); } }', 
+'', 
+'@layer base {', 
+'  html { font-family: Inter, system-ui, sans-serif; -webkit-font-smoothing: antialiased; }', 
+'  body { background-color: #f8f9fc; color: #111827; }', 
+'}', 
+'', 
+'@utility font-plate { font-family: "Courier Prime", "Courier New", monospace; }', 
+'@utility font-display { font-family: "DM Sans", Inter, system-ui, sans-serif; }', 
+].join('\n'), {encoding:'utf8'}); 
+console.log('globals.css geschreven!'); 
