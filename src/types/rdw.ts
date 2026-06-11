@@ -1,15 +1,38 @@
-﻿import { RDW_BASE_URL, RDW_DATASETS } from "@/lib/utils/constants";
-
-export function buildRDWUrl(dataset: string, plate: string): string {
-  const params = new URLSearchParams({
-    kenteken: plate.toUpperCase(),
-    $limit: "5",
-  });
-  const appToken = process.env.RDW_APP_TOKEN;
-  if (appToken) params.set("$$app_token", appToken);
-  return `${RDW_BASE_URL}/${dataset}.json?${params.toString()}`;
+﻿export interface RDWVehicleRaw {
+  kenteken?: string;
+  merk?: string;
+  handelsbenaming?: string;
+  voertuigsoort?: string;
+  inrichting?: string;
+  eerste_kleur?: string;
+  tweede_kleur?: string;
+  aantal_deuren?: string;
+  aantal_zitplaatsen?: string;
+  brandstof_omschrijving?: string;
+  cilinderinhoud?: string;
+  nettomaximumvermogen?: string;
+  massa_ledig_voertuig?: string;
+  massa_rijklaar?: string;
+  toegestane_maximum_massa_voertuig?: string;
+  catalogusprijs?: string;
+  datum_eerste_toelating?: string;
+  vervaldatum_apk?: string;
+  co2_uitstoot_gecombineerd?: string;
+  wam_verzekerd?: string;
+  aantal_cilinders?: string;
+  vermogen_massarijklaar?: string;
 }
 
-export const vehicleUrl = (plate: string) => buildRDWUrl(RDW_DATASETS.VEHICLES, plate);
-export const apkUrl = (plate: string) => buildRDWUrl(RDW_DATASETS.APK, plate);
-export const fuelUrl = (plate: string) => buildRDWUrl(RDW_DATASETS.FUEL, plate);
+export interface RDWApkRaw {
+  kenteken?: string;
+  vervaldatum_apk?: string;
+  vervaldatum_apk_dt?: string;
+}
+
+export interface RDWFuelRaw {
+  kenteken?: string;
+  brandstof_omschrijving?: string;
+  cilinderinhoud?: string;
+  nettomaximumvermogen?: string;
+  co2_uitstoot_gecombineerd?: string;
+}
