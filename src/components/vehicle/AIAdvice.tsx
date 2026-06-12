@@ -22,10 +22,10 @@ export function AIAdvice({ vehicle }: Props) {
       if (data.advice) {
         setAdvice(data.advice);
       } else {
-        setError("Kon geen advies ophalen.");
+        setError("Geen advies: " + JSON.stringify(data));
       }
-    } catch {
-      setError("Verbindingsfout. Probeer opnieuw.");
+    } catch (err) {
+      setError("Fout: " + String(err));
     } finally {
       setLoading(false);
     }
