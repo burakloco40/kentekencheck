@@ -27,6 +27,10 @@ export interface RDWApkRaw {
   kenteken?: string;
   vervaldatum_apk?: string;
   vervaldatum_apk_dt?: string;
+  brandstof_omschrijving?: string;
+  nettomaximumvermogen?: string;
+  co2_uitstoot_gecombineerd?: string;
+  cilinderinhoud?: string;
 }
 
 export interface RDWFuelRaw {

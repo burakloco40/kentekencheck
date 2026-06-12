@@ -9,10 +9,10 @@ export function transformRDWData(
   apkData: RDWApkRaw | null,
   fuelData: RDWFuelRaw | null
 ): VehicleData {
-  const fuelType = vehicleBase.brandstof_omschrijving ?? fuelData?.brandstof_omschrijving ?? null;
-  const rawDisplacement = vehicleBase.cilinderinhoud ?? fuelData?.cilinderinhoud ?? null;
-  const rawPowerKW = vehicleBase.nettomaximumvermogen ?? fuelData?.nettomaximumvermogen ?? null;
-  const rawCO2 = vehicleBase.co2_uitstoot_gecombineerd ?? fuelData?.co2_uitstoot_gecombineerd ?? null;
+  const fuelType = fuelData?.brandstof_omschrijving ?? vehicleBase.brandstof_omschrijving ?? null;
+  const rawDisplacement = fuelData?.cilinderinhoud ?? vehicleBase.cilinderinhoud ?? null;
+  const rawPowerKW = fuelData?.nettomaximumvermogen ?? vehicleBase.nettomaximumvermogen ?? null;
+  const rawCO2 = fuelData?.co2_uitstoot_gecombineerd ?? vehicleBase.co2_uitstoot_gecombineerd ?? null;
   const powerKW = rawPowerKW ? Math.round(parseFloat(rawPowerKW)) : null;
   const apkRaw = vehicleBase.vervaldatum_apk ?? apkData?.vervaldatum_apk ?? null;
   const apkISO = formatDateISO(apkRaw);
