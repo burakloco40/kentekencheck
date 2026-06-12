@@ -6,15 +6,15 @@ import { Footer } from "@/components/layout/Footer";
 export const metadata: Metadata = {
   title: { default: "Kentekencheck — Voertuiggegevens opzoeken", template: "%s | Kentekencheck" },
   description: "Gratis Nederlands kenteken opzoeken. Bekijk merk, model, APK-vervaldatum, brandstof, vermogen en meer.",
-  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL ?? "https://kentekencheck.vercel.app"),
+  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL ?? "https://kentekencheckapp.vercel.app"),
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="nl">
-      <body className="min-h-screen flex flex-col">
+      <body style={{minHeight:'100vh',display:'flex',flexDirection:'column',margin:0,padding:0,background:'#f9fafb',fontFamily:'Inter, system-ui, sans-serif'}}>
         <Header />
-        <main className="flex-1">{children}</main>
+        <main style={{flex:1}}>{children}</main>
         <Footer />
       </body>
     </html>

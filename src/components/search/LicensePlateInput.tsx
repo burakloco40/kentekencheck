@@ -1,5 +1,5 @@
 ﻿"use client";
-import { useState, useRef, useCallback } from "react";
+import { useState, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { isValidPlate, normalizePlate } from "@/lib/validation/plate";
 
@@ -13,26 +13,43 @@ export function LicensePlateInput({ initialValue = "", autoFocus = false, size =
   const [error, setError] = useState<string | null>(null);
   const isHero = size === "hero";
 
-  const handleChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+  function handleSearch(plateInput: string) {
+    const normalized = normalizePlate(plateInput);
+    if (!normalized) {
+      setError("Voer een kenteken in.");
+      inputRef.current?.focus();
+      return;
+    }
+    if (!isValidPlate(normalized)) {
+      setError("Ongeldig kenteken. Probeer bijv. SH-239-S.");
+      inputRef.current?.focus();
+      return;
+    }
+setError(null);
+    router.push("/voertuig/" + normalized);
+  }
+
+  function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+    e.stopPropagation();
+    handleSearch(value);
+  }
+
+  function handleKeyDown(e: React.KeyboardEvent<HTMLInputElement>) {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      handleSearch(value);
+    }
+  }
+
+  function handleChange(e: React.ChangeEvent<HTMLInputElement>) {
     if (error) setError(null);
     setValue(e.target.value.toUpperCase().replace(/[^A-Z0-9-]/g, ""));
-  }, [error]);
-
-  const handleSearch = useCallback(async (plateInput: string) => {
-    const normalized = normalizePlate(plateInput);
-    if (!normalized) { setError("Voer een kenteken in."); inputRef.current?.focus(); return; }
-    if (!isValidPlate(normalized)) { setError("Ongeldig kenteken. Probeer bijv. SH-239-S."); inputRef.current?.focus(); return; }
-    setIsLoading(true);
-    setError(null);
-    router.push(`/voertuig/${normalized}`);
-    setTimeout(() => setIsLoading(false), 500);
-  }, [router]);
-
-  const handleSubmit = (e: React.FormEvent) => { e.preventDefault(); handleSearch(value); };
+  }
 
   return (
     <div style={{width:'100%', maxWidth: isHero ? '480px' : '320px'}}>
-      <form onSubmit={handleSubmit} noValidate>
+      <form onSubmit={handleSubmit} noValidate action="#">
         <div style={{
           display:'flex',
           alignItems:'stretch',
@@ -41,7 +58,6 @@ export function LicensePlateInput({ initialValue = "", autoFocus = false, size =
           overflow:'hidden',
           boxShadow: error ? '0 0 0 3px rgba(239,68,68,0.15)' : '0 2px 8px rgba(0,0,0,0.12)',
         }}>
-          {/* NL strip */}
           <div style={{background:'#162d58',width: isHero ? '44px' : '34px',display:'flex',flexDirection:'column',alignItems:'center',justifyContent:'center',gap:'3px',padding:'4px',flexShrink:0}}>
             <div style={{display:'flex',flexWrap:'wrap',justifyContent:'center',width:'18px',gap:'2px'}}>
               {Array.from({length:12}).map((_,i)=>(
@@ -50,8 +66,6 @@ export function LicensePlateInput({ initialValue = "", autoFocus = false, size =
             </div>
             <span style={{fontFamily:'Courier Prime, monospace',fontSize: isHero ? '11px' : '8px',fontWeight:700,color:'white',letterSpacing:'0.05em'}}>NL</span>
           </div>
-
-          {/* Input */}
           <input
             ref={inputRef}
             type="text"
@@ -62,7 +76,7 @@ export function LicensePlateInput({ initialValue = "", autoFocus = false, size =
             spellCheck={false}
             value={value}
             onChange={handleChange}
-            onKeyDown={(e) => { if (e.key === "Enter") handleSearch(value); }}
+            onKeyDown={handleKeyDown}
             placeholder="SH-239-S"
             maxLength={9}
             autoFocus={autoFocus}
@@ -80,8 +94,6 @@ export function LicensePlateInput({ initialValue = "", autoFocus = false, size =
               padding: isHero ? '14px 16px' : '10px 12px',
             }}
           />
-
-          {/* Knop */}
           <button
             type="submit"
             disabled={isLoading}

@@ -3,58 +3,92 @@ import { LicensePlateInput } from "@/components/search/LicensePlateInput";
 
 export const metadata: Metadata = {
   title: "Kentekencheck — Voertuiggegevens opzoeken",
-  description: "Gratis Nederlands kenteken opzoeken.",
+  description: "Gratis Nederlands kenteken opzoeken. Bekijk APK, brandstof, vermogen en meer.",
 };
 
 export default function HomePage() {
   return (
     <>
-      <section style={{background:'linear-gradient(to bottom, #0f2040, #162d58, #1e3a6e)',color:'white',padding:'80px 16px'}}>
-        <div style={{maxWidth:'800px',margin:'0 auto',textAlign:'center'}}>
-          <div style={{display:'inline-flex',alignItems:'center',gap:'8px',padding:'6px 16px',background:'rgba(255,255,255,0.1)',border:'1px solid rgba(255,255,255,0.2)',borderRadius:'999px',fontSize:'12px',color:'rgba(255,255,255,0.8)',marginBottom:'24px'}}>
-            <span style={{width:'8px',height:'8px',borderRadius:'50%',background:'#4ade80',display:'inline-block'}} />
-            Gratis · Officiële RDW data
+      {/* Hero */}
+      <section style={{background:'linear-gradient(135deg, #0a1628 0%, #0f2040 50%, #162d58 100%)',color:'white',padding:'80px 16px 96px'}}>
+        <div style={{maxWidth:'760px',margin:'0 auto',textAlign:'center'}}>
+          <div style={{display:'inline-flex',alignItems:'center',gap:'8px',padding:'6px 18px',background:'rgba(245,197,24,0.12)',border:'1px solid rgba(245,197,24,0.3)',borderRadius:'999px',fontSize:'12px',fontWeight:600,color:'#F5C518',marginBottom:'28px',letterSpacing:'0.06em'}}>
+            GRATIS · OFFICIËLE RDW DATA
           </div>
-          <h1 style={{fontSize:'clamp(36px,6vw,60px)',fontWeight:800,color:'white',marginBottom:'16px',lineHeight:1.1}}>
+          <h1 style={{fontSize:'clamp(36px,6vw,64px)',fontWeight:900,color:'white',margin:'0 0 20px',lineHeight:1.05,letterSpacing:'-1px'}}>
             Kenteken <span style={{color:'#F5C518'}}>opzoeken</span>
           </h1>
-          <p style={{fontSize:'18px',color:'rgba(255,255,255,0.6)',marginBottom:'40px',maxWidth:'400px',margin:'0 auto 40px'}}>
-            Voer een Nederlands kenteken in en bekijk direct alle voertuiggegevens.
+          <p style={{fontSize:'18px',color:'rgba(255,255,255,0.55)',margin:'0 auto 44px',maxWidth:'420px',lineHeight:1.6}}>
+            Voer een Nederlands kenteken in en bekijk direct alle voertuiggegevens uit het RDW register.
           </p>
-          <div style={{display:'flex',justifyContent:'center'}}>
+          <div style={{display:'flex',justifyContent:'center',marginBottom:'20px'}}>
             <LicensePlateInput autoFocus size="hero" />
           </div>
-          <div style={{marginTop:'20px'}}>
-            <span style={{fontSize:'12px',color:'rgba(255,255,255,0.3)'}}>Voorbeeld: </span>
-            <a href="/voertuig/SH239S" style={{fontFamily:'Courier Prime, monospace',fontSize:'12px',padding:'4px 10px',background:'rgba(255,255,255,0.1)',border:'1px solid rgba(255,255,255,0.2)',borderRadius:'4px',color:'rgba(255,255,255,0.7)',textDecoration:'none'}}>SH-239-S</a>
-          </div>
+          <p style={{fontSize:'13px',color:'rgba(255,255,255,0.3)',margin:0}}>
+            Probeer bijv.{' '}
+            <a href="/voertuig/SH239S" style={{fontFamily:'Courier Prime, monospace',color:'rgba(255,255,255,0.5)',textDecoration:'none',background:'rgba(255,255,255,0.08)',padding:'2px 8px',borderRadius:'4px',border:'1px solid rgba(255,255,255,0.15)'}}>SH-239-S</a>
+          </p>
+        </div>
+
+        {/* Stats balk */}
+        <div style={{maxWidth:'720px',margin:'48px auto 0',display:'grid',gridTemplateColumns:'repeat(3,1fr)',gap:'1px',background:'rgba(255,255,255,0.08)',borderRadius:'16px',overflow:'hidden',border:'1px solid rgba(255,255,255,0.08)'}}>
+          {[
+            {number:'10M+', label:'Voertuigen in register'},
+            {number:'100%', label:'Officiële RDW data'},
+            {number:'Gratis', label:'Altijd beschikbaar'},
+          ].map(s => (
+            <div key={s.number} style={{padding:'20px 16px',textAlign:'center',background:'rgba(255,255,255,0.03)'}}>
+              <div style={{fontSize:'24px',fontWeight:800,color:'#F5C518',marginBottom:'4px'}}>{s.number}</div>
+              <div style={{fontSize:'12px',color:'rgba(255,255,255,0.4)',fontWeight:500}}>{s.label}</div>
+            </div>
+          ))}
         </div>
       </section>
-      <section style={{maxWidth:'1000px',margin:'0 auto',padding:'60px 16px'}}>
-        <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fill,minmax(280px,1fr))',gap:'20px'}}>
+
+      {/* Features */}
+      <section style={{maxWidth:'1100px',margin:'0 auto',padding:'64px 16px'}}>
+        <div style={{textAlign:'center',marginBottom:'40px'}}>
+          <h2 style={{fontSize:'28px',fontWeight:800,color:'#0f2040',margin:'0 0 10px'}}>Alles wat je wilt weten</h2>
+          <p style={{fontSize:'15px',color:'#6b7280',margin:0}}>Direct beschikbaar via het officiële RDW register</p>
+        </div>
+        <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fill,minmax(300px,1fr))',gap:'20px'}}>
           {[
-            {icon:'✓',title:'APK-status',desc:'Geldig of verlopen, inclusief vervaldatum en resterende dagen'},
-            {icon:'⚙️',title:'Voertuiggegevens',desc:'Merk, model, brandstof, vermogen, gewicht en meer'},
-            {icon:'⚡',title:'Direct resultaat',desc:'Rechtstreeks uit het officiële RDW register'},
+            {icon:'📋',title:'APK & Verzekering',desc:'Bekijk de APK vervaldatum, resterende dagen en of het voertuig WAM verzekerd is.'},
+            {icon:'⚙️',title:'Motor & Techniek',desc:'Brandstof, vermogen in pk en kW, cilinderinhoud en CO2 uitstoot.'},
+            {icon:'⚖️',title:'Gewicht & Prijs',desc:'Leeg gewicht, rijklaar gewicht, max massa en de originele catalogusprijs.'},
+            {icon:'🚗',title:'Voertuiggegevens',desc:'Merk, model, carrosserie, kleur, aantal deuren en zitplaatsen.'},
+            {icon:'🤖',title:'AI Voertuigadvies',desc:'Automatische AI-analyse over betrouwbaarheid, koppelmoment en aandachtspunten.'},
+            {icon:'🔒',title:'Privacy vriendelijk',desc:'Wij slaan geen kentekens op. Alle data komt rechtstreeks van de RDW.'},
           ].map(f => (
-            <div key={f.title} style={{background:'white',border:'1px solid #e5e7eb',borderRadius:'16px',padding:'24px',display:'flex',gap:'16px'}}>
-              <div style={{width:'40px',height:'40px',borderRadius:'10px',background:'#f0f9ff',display:'flex',alignItems:'center',justifyContent:'center',fontSize:'18px',flexShrink:0}}>{f.icon}</div>
+            <div key={f.title} style={{background:'white',border:'1px solid #e5e7eb',borderRadius:'16px',padding:'24px',display:'flex',gap:'16px',boxShadow:'0 1px 3px rgba(0,0,0,0.05)'}}>
+              <div style={{width:'44px',height:'44px',borderRadius:'12px',background:'#f0f9ff',border:'1px solid #e0f2fe',display:'flex',alignItems:'center',justifyContent:'center',fontSize:'20px',flexShrink:0}}>{f.icon}</div>
               <div>
-                <h3 style={{fontSize:'15px',fontWeight:700,color:'#0f2040',marginBottom:'4px',margin:'0 0 4px'}}>{f.title}</h3>
-                <p style={{fontSize:'13px',color:'#6b7280',lineHeight:'1.5',margin:0}}>{f.desc}</p>
+                <h3 style={{fontSize:'15px',fontWeight:700,color:'#0f2040',margin:'0 0 6px'}}>{f.title}</h3>
+                <p style={{fontSize:'13px',color:'#6b7280',lineHeight:'1.6',margin:0}}>{f.desc}</p>
               </div>
             </div>
           ))}
         </div>
       </section>
-      <section style={{maxWidth:'1000px',margin:'0 auto',padding:'0 16px 60px'}}>
-        <div style={{background:'white',border:'1px solid #e5e7eb',borderRadius:'16px',padding:'32px'}}>
-          <h2 style={{fontSize:'20px',fontWeight:700,color:'#0f2040',marginBottom:'12px',margin:'0 0 12px'}}>Hoe werkt het?</h2>
-          <p style={{fontSize:'14px',color:'#6b7280',lineHeight:'1.7',margin:0}}>
-            Voer een geldig Nederlands kenteken in. Onze service raadpleegt het officiële{' '}
-            <a href="https://opendata.rdw.nl" target="_blank" rel="noopener noreferrer" style={{color:'#0284c7'}}>RDW Open Data register</a>{' '}
-            en toont direct de beschikbare voertuiggegevens. De informatie is openbaar beschikbaar en wordt niet bewaard.
+
+      {/* Hoe werkt het */}
+      <section style={{background:'#f9fafb',borderTop:'1px solid #e5e7eb',borderBottom:'1px solid #e5e7eb',padding:'64px 16px'}}>
+        <div style={{maxWidth:'720px',margin:'0 auto',textAlign:'center'}}>
+          <h2 style={{fontSize:'28px',fontWeight:800,color:'#0f2040',margin:'0 0 16px'}}>Hoe werkt het?</h2>
+          <p style={{fontSize:'15px',color:'#6b7280',lineHeight:'1.8',margin:'0 0 32px'}}>
+            Voer een geldig Nederlands kenteken in. Onze service raadpleegt direct het officiële{' '}
+            <a href="https://opendata.rdw.nl" target="_blank" rel="noopener noreferrer" style={{color:'#0284c7',textDecoration:'none',fontWeight:600}}>RDW Open Data register</a>{' '}
+            en toont alle beschikbare voertuiggegevens. De informatie is openbaar en wordt niet opgeslagen.
           </p>
+          <div style={{display:'flex',justifyContent:'center',alignItems:'center',gap:'12px',flexWrap:'wrap'}}>
+            {['Kenteken invoeren','RDW raadplegen','Direct resultaat'].map((step, i) => (
+              <div key={step} style={{display:'flex',alignItems:'center',gap:'8px'}}>
+                <div style={{width:'28px',height:'28px',borderRadius:'50%',background:'#0f2040',color:'white',display:'flex',alignItems:'center',justifyContent:'center',fontSize:'13px',fontWeight:700,flexShrink:0}}>{i+1}</div>
+                <span style={{fontSize:'14px',fontWeight:600,color:'#374151'}}>{step}</span>
+                {i < 2 && <span style={{color:'#d1d5db',fontSize:'20px',marginLeft:'4px'}}>→</span>}
+              </div>
+            ))}
+          </div>
         </div>
       </section>
     </>
