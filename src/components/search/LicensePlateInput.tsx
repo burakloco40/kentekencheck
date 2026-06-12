@@ -1,56 +1,115 @@
 ﻿"use client";
 import { useState, useRef, useCallback } from "react";
 import { useRouter } from "next/navigation";
-import { isValidPlate, normalizePlate, formatPlateDisplay } from "@/lib/validation/plate";
-import { Spinner } from "@/components/ui/Spinner";
-import { cn } from "@/lib/utils/cn";
-interface LicensePlateInputProps { initialValue?: string; autoFocus?: boolean; size?: "hero" | "compact"; }
-export function LicensePlateInput({ initialValue = "", autoFocus = false, size = "hero" }: LicensePlateInputProps) {
+import { isValidPlate, normalizePlate } from "@/lib/validation/plate";
+
+interface Props { initialValue?: string; autoFocus?: boolean; size?: "hero" | "compact"; }
+
+export function LicensePlateInput({ initialValue = "", autoFocus = false, size = "hero" }: Props) {
   const router = useRouter();
   const inputRef = useRef<HTMLInputElement>(null);
   const [value, setValue] = useState(initialValue);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const isHero = size === "hero";
+
   const handleChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     if (error) setError(null);
     setValue(e.target.value.toUpperCase().replace(/[^A-Z0-9-]/g, ""));
   }, [error]);
+
   const handleSearch = useCallback(async (plateInput: string) => {
     const normalized = normalizePlate(plateInput);
     if (!normalized) { setError("Voer een kenteken in."); inputRef.current?.focus(); return; }
     if (!isValidPlate(normalized)) { setError("Ongeldig kenteken. Probeer bijv. SH-239-S."); inputRef.current?.focus(); return; }
-    setIsLoading(true); setError(null);
+    setIsLoading(true);
+    setError(null);
     router.push(`/voertuig/${normalized}`);
     setTimeout(() => setIsLoading(false), 500);
   }, [router]);
+
   const handleSubmit = (e: React.FormEvent) => { e.preventDefault(); handleSearch(value); };
-  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => { if (e.key === "Enter") handleSearch(value); };
+
   return (
-    <div className={cn("w-full", isHero ? "max-w-lg" : "max-w-sm")}>
+    <div style={{width:'100%', maxWidth: isHero ? '480px' : '320px'}}>
       <form onSubmit={handleSubmit} noValidate>
-        <div className={cn("relative flex items-stretch rounded-plate border-2 overflow-hidden transition-all duration-200", error ? "border-red-400 shadow-[0_0_0_3px_rgb(239_68_68_/_0.15)]" : "border-plate-dark/30 shadow-plate focus-within:border-plate-dark/60 focus-within:shadow-[0_0_0_3px_rgb(245_197_24_/_0.25)]")}>
-          <div className={cn("flex flex-col items-center justify-center bg-[var(--color-navy-600)] shrink-0", isHero ? "w-10 gap-1" : "w-8 gap-0.5")} aria-hidden="true">
-            <div className="flex flex-wrap justify-center w-5 gap-0.5">
-              {Array.from({ length: 12 }).map((_, i) => <div key={i} className={cn("rounded-full bg-plate-yellow", isHero ? "w-[3px] h-[3px]" : "w-[2px] h-[2px]")} />)}
+        <div style={{
+          display:'flex',
+          alignItems:'stretch',
+          borderRadius:'6px',
+          border: error ? '2px solid #ef4444' : '2px solid rgba(212,160,23,0.4)',
+          overflow:'hidden',
+          boxShadow: error ? '0 0 0 3px rgba(239,68,68,0.15)' : '0 2px 8px rgba(0,0,0,0.12)',
+        }}>
+          {/* NL strip */}
+          <div style={{background:'#162d58',width: isHero ? '44px' : '34px',display:'flex',flexDirection:'column',alignItems:'center',justifyContent:'center',gap:'3px',padding:'4px',flexShrink:0}}>
+            <div style={{display:'flex',flexWrap:'wrap',justifyContent:'center',width:'18px',gap:'2px'}}>
+              {Array.from({length:12}).map((_,i)=>(
+                <div key={i} style={{width: isHero ? '3px' : '2px',height: isHero ? '3px' : '2px',borderRadius:'50%',background:'#F5C518'}} />
+              ))}
             </div>
-            <span className={cn("font-plate font-bold text-white leading-none tracking-wider", isHero ? "text-[11px]" : "text-[9px]")}>NL</span>
+            <span style={{fontFamily:'Courier Prime, monospace',fontSize: isHero ? '11px' : '8px',fontWeight:700,color:'white',letterSpacing:'0.05em'}}>NL</span>
           </div>
-          <input ref={inputRef} type="text" inputMode="text" autoCapitalize="characters" autoCorrect="off" autoComplete="off" spellCheck={false}
-            value={value} onChange={handleChange} onKeyDown={handleKeyDown} placeholder="SH-239-S" maxLength={9} autoFocus={autoFocus}
-            aria-label="Kenteken invoeren" aria-invalid={!!error} aria-describedby={error ? "plate-error" : undefined}
-            className={cn("flex-1 bg-plate-yellow font-plate font-bold tracking-widest placeholder:text-plate-dark/40 text-[var(--color-navy-800)] focus:outline-none caret-navy-600", isHero ? "px-4 py-4 text-2xl" : "px-3 py-2.5 text-base")} />
-          <button type="submit" disabled={isLoading} aria-label="Kenteken opzoeken"
-            className={cn("flex items-center justify-center shrink-0 bg-[var(--color-navy-600)] hover:bg-[var(--color-navy-700)] active:bg-[var(--color-navy-800)] text-white transition-colors duration-150 disabled:opacity-70 disabled:cursor-not-allowed", isHero ? "w-14" : "w-11")}>
-            {isLoading ? <Spinner size={isHero ? "md" : "sm"} className="text-white" /> : (
-              <svg className={cn(isHero ? "w-5 h-5" : "w-4 h-4")} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5} aria-hidden="true">
+
+          {/* Input */}
+          <input
+            ref={inputRef}
+            type="text"
+            inputMode="text"
+            autoCapitalize="characters"
+            autoCorrect="off"
+            autoComplete="off"
+            spellCheck={false}
+            value={value}
+            onChange={handleChange}
+            onKeyDown={(e) => { if (e.key === "Enter") handleSearch(value); }}
+            placeholder="SH-239-S"
+            maxLength={9}
+            autoFocus={autoFocus}
+            aria-label="Kenteken invoeren"
+            style={{
+              flex:1,
+              background:'#F5C518',
+              fontFamily:'Courier Prime, monospace',
+              fontWeight:700,
+              fontSize: isHero ? '28px' : '16px',
+              letterSpacing:'0.15em',
+              color:'#0f2040',
+              border:'none',
+              outline:'none',
+              padding: isHero ? '14px 16px' : '10px 12px',
+            }}
+          />
+
+          {/* Knop */}
+          <button
+            type="submit"
+            disabled={isLoading}
+            style={{
+              background:'#162d58',
+              color:'white',
+              border:'none',
+              padding:'0',
+              width: isHero ? '56px' : '44px',
+              display:'flex',
+              alignItems:'center',
+              justifyContent:'center',
+              cursor: isLoading ? 'not-allowed' : 'pointer',
+              flexShrink:0,
+            }}
+          >
+            {isLoading ? (
+              <div style={{width:'20px',height:'20px',border:'2px solid rgba(255,255,255,0.3)',borderTopColor:'white',borderRadius:'50%',animation:'spin 0.8s linear infinite'}} />
+            ) : (
+              <svg width={isHero ? 20 : 16} height={isHero ? 20 : 16} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z" />
               </svg>
             )}
           </button>
         </div>
-        {error && <p id="plate-error" role="alert" className="mt-2 text-sm text-red-600 font-medium">{error}</p>}
+        {error && <p style={{marginTop:'8px',fontSize:'13px',color:'#ef4444',fontWeight:600}}>{error}</p>}
       </form>
+      <style>{`@keyframes spin{to{transform:rotate(360deg)}}`}</style>
     </div>
   );
 }
