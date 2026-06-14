@@ -33,12 +33,15 @@ export interface VehicleData {
   catalogPrice: number | null;
   firstAdmissionDate: string | null;
   firstAdmissionDateNL: string | null;
+  lastRegistrationDateNL: string | null;
   apkExpiryDate: string | null;
   apkExpiryDateNL: string | null;
   apkStatus: APKStatus;
   apkDaysRemaining: number | null;
   apkHistory: APKKeuring[];
   insuranceStatus: InsuranceStatus;
+  hasRecallAction: boolean;
+  isExported: boolean;
   fetchedAt: string;
 }
 

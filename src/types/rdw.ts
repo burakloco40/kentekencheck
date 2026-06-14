@@ -16,11 +16,14 @@
   toegestane_maximum_massa_voertuig?: string;
   catalogusprijs?: string;
   datum_eerste_toelating?: string;
+  datum_tenaamstelling?: string;
   vervaldatum_apk?: string;
   co2_uitstoot_gecombineerd?: string;
   wam_verzekerd?: string;
   aantal_cilinders?: string;
   vermogen_massarijklaar?: string;
+  openstaande_terugroepactie_indicator?: string;
+  export_indicator?: string;
 }
 
 export interface RDWApkRaw {

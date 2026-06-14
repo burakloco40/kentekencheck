@@ -46,7 +46,6 @@ export function transformRDWData(
   const rawPrice = vehicleBase.catalogusprijs;
   const catalogPrice = rawPrice && rawPrice !== "0" ? parseInt(rawPrice, 10) : null;
 
-  // Bouw APK keuringshistorie
   const apkHistory: APKKeuring[] = keuringen.map(k => {
     const datum = k.meld_datum_door_keuringsinstantie ?? "";
     const keuringGebreken = gebreken
@@ -63,6 +62,9 @@ export function transformRDWData(
       gebreken: keuringGebreken,
     };
   });
+
+  const hasRecallAction = vehicleBase.openstaande_terugroepactie_indicator === "Ja";
+  const isExported = vehicleBase.export_indicator === "Ja";
 
   return {
     plate: formatPlateDisplay(plate),
@@ -87,12 +89,15 @@ export function transformRDWData(
     catalogPrice,
     firstAdmissionDate: formatDateISO(vehicleBase.datum_eerste_toelating),
     firstAdmissionDateNL: formatDateNL(vehicleBase.datum_eerste_toelating),
+    lastRegistrationDateNL: formatDateNL(vehicleBase.datum_tenaamstelling),
     apkExpiryDate: apkISO,
     apkExpiryDateNL: formatDateNL(apkRaw),
     apkStatus,
     apkDaysRemaining: apkDays !== null && apkStatus !== "unknown" ? apkDays : null,
     apkHistory,
     insuranceStatus,
+    hasRecallAction,
+    isExported,
     fetchedAt: new Date().toISOString(),
   };
 }
