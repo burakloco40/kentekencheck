@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { isValidPlate, normalizePlate } from "@/lib/validation/plate";
-import { fetchAllRDWData } from "@/lib/rdw/client";
+import { fetchAllRDWData, fetchGebrekOmschrijving } from "@/lib/rdw/client";
 import { transformRDWData } from "@/lib/rdw/transformer";
 import type { ApiError } from "@/types/vehicle";
 
@@ -49,7 +49,15 @@ export async function GET(
   }
 
   try {
-    const data = transformRDWData(plate, r.vehicleBase, r.apkData, r.fuelData);
+    const gebrekIds = [...new Set(r.gebreken.map(g => g.gebrek_identificatie).filter(Boolean))] as string[];
+    const omschrijvingen = new Map<string, string>();
+    await Promise.all(
+      gebrekIds.map(async (id) => {
+        const omschrijving = await fetchGebrekOmschrijving(id);
+        if (omschrijving) omschrijvingen.set(id, omschrijving);
+      })
+    );
+    const data = transformRDWData(plate, r.vehicleBase, r.apkData, r.fuelData, r.keuringen, r.gebreken, omschrijvingen);
     return NextResponse.json({ success: true, data }, { status: 200 });
   } catch {
     return NextResponse.json({

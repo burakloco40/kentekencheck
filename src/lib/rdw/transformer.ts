@@ -1,13 +1,31 @@
-import type { RDWVehicleRaw, RDWApkRaw, RDWFuelRaw } from "@/types/rdw";
-import type { VehicleData, APKStatus, InsuranceStatus } from "@/types/vehicle";
+import type { RDWVehicleRaw, RDWApkRaw, RDWFuelRaw, RDWKeuringRaw, RDWGebrekRaw } from "@/types/rdw";
+import type { VehicleData, APKStatus, InsuranceStatus, APKKeuring } from "@/types/vehicle";
 import { formatDateNL, formatDateISO, daysFromToday, formatFuelType, formatVehicleType, formatColor, formatBodyStyle, kwToHp } from "@/lib/utils/formatters";
 import { formatPlateDisplay } from "@/lib/validation/plate";
+
+function formatTijd(tijd: string | undefined): string {
+  if (!tijd) return "";
+  const padded = tijd.padStart(4, "0");
+  return padded.slice(0, 2) + ":" + padded.slice(2, 4);
+}
+
+function formatDatumNLFromYYYYMMDD(d: string | undefined): string {
+  if (!d || d.length !== 8) return "";
+  const monthNames = ["jan","feb","mrt","apr","mei","jun","jul","aug","sep","okt","nov","dec"];
+  const month = parseInt(d.slice(4, 6), 10) - 1;
+  const day = parseInt(d.slice(6, 8), 10);
+  const year = d.slice(0, 4);
+  return `${day} ${monthNames[month]} ${year}`;
+}
 
 export function transformRDWData(
   plate: string,
   vehicleBase: RDWVehicleRaw,
   apkData: RDWApkRaw | null,
-  fuelData: RDWFuelRaw | null
+  fuelData: RDWFuelRaw | null,
+  keuringen: RDWKeuringRaw[] = [],
+  gebreken: RDWGebrekRaw[] = [],
+  gebrekOmschrijvingen: Map<string, string> = new Map()
 ): VehicleData {
   const fuelType = fuelData?.brandstof_omschrijving ?? vehicleBase.brandstof_omschrijving ?? null;
   const rawDisplacement = fuelData?.cilinderinhoud ?? vehicleBase.cilinderinhoud ?? null;
@@ -27,6 +45,25 @@ export function transformRDWData(
   }
   const rawPrice = vehicleBase.catalogusprijs;
   const catalogPrice = rawPrice && rawPrice !== "0" ? parseInt(rawPrice, 10) : null;
+
+  // Bouw APK keuringshistorie
+  const apkHistory: APKKeuring[] = keuringen.map(k => {
+    const datum = k.meld_datum_door_keuringsinstantie ?? "";
+    const keuringGebreken = gebreken
+      .filter(g => g.meld_datum_door_keuringsinstantie === datum)
+      .map(g => {
+        const id = g.gebrek_identificatie ?? "";
+        return gebrekOmschrijvingen.get(id) ?? id;
+      });
+    return {
+      datum,
+      datumNL: formatDatumNLFromYYYYMMDD(datum),
+      tijd: formatTijd(k.meld_tijd_door_keuringsinstantie),
+      soort: k.soort_melding_ki_omschrijving ?? "Keuring",
+      gebreken: keuringGebreken,
+    };
+  });
+
   return {
     plate: formatPlateDisplay(plate),
     plateRaw: plate.toUpperCase(),
@@ -54,6 +91,7 @@ export function transformRDWData(
     apkExpiryDateNL: formatDateNL(apkRaw),
     apkStatus,
     apkDaysRemaining: apkDays !== null && apkStatus !== "unknown" ? apkDays : null,
+    apkHistory,
     insuranceStatus,
     fetchedAt: new Date().toISOString(),
   };

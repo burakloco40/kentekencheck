@@ -5,12 +5,22 @@ import { isValidPlate, normalizePlate, formatPlateDisplay } from "@/lib/validati
 import { VehicleHeader } from "@/components/vehicle/VehicleHeader";
 import { VehicleDataGrid } from "@/components/vehicle/VehicleDataGrid";
 import { LicensePlateInput } from "@/components/search/LicensePlateInput";
-import { ErrorMessage } from "@/components/ui/ErrorMessage";
-import { fetchAllRDWData } from "@/lib/rdw/client";
-import { transformRDWData } from "@/lib/rdw/transformer";
+import type { VehicleData, ErrorCode } from "@/types/vehicle";
 
 interface PageProps {
   params: Promise<{ kenteken: string }>;
+}
+
+interface VehicleSuccess { success: true; data: VehicleData; }
+interface VehicleError { success: false; error: ErrorCode; message: string; }
+type VehicleResult = VehicleSuccess | VehicleError;
+
+async function getData(plate: string): Promise<VehicleResult> {
+  const base = process.env.VERCEL_URL
+    ? "https://kentekencheckapp.vercel.app"
+    : "http://localhost:3000";
+  const res = await fetch(`${base}/api/vehicle/${plate}`, { cache: "no-store" });
+  return res.json() as Promise<VehicleResult>;
 }
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
@@ -27,38 +37,30 @@ export default async function Page({ params }: PageProps) {
   const normalized = normalizePlate(kenteken);
   if (!isValidPlate(normalized)) notFound();
 
-  let vehicle = null;
-  let errorMessage: string | null = null;
-
-  try {
-    const rdw = await fetchAllRDWData(normalized);
-    if (rdw.upstreamError) {
-      errorMessage = "RDW is tijdelijk niet bereikbaar. Probeer het later opnieuw.";
-    } else if (!rdw.vehicleBase) {
-      errorMessage = "Kenteken " + normalized + " niet gevonden in het RDW register.";
-    } else {
-      vehicle = transformRDWData(normalized, rdw.vehicleBase, rdw.apkData, rdw.fuelData);
-    }
-  } catch {
-    errorMessage = "Er is een fout opgetreden. Probeer het later opnieuw.";
-  }
+  const result = await getData(normalized);
+  const vehicle = result.success ? result.data : null;
+  const errorMessage = !result.success ? result.message : null;
 
   return (
-    <div className="max-w-5xl mx-auto px-4 py-6 sm:py-10">
-      <div className="mb-8 flex flex-col sm:flex-row sm:items-center gap-4">
-        <Link href="/" className="flex items-center gap-1.5 text-sm text-gray-400 hover:text-gray-600 transition-colors shrink-0">
-          <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-            <path strokeLinecap="round" strokeLinejoin="round" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18" />
-          </svg>
-          Terug
-        </Link>
-        <LicensePlateInput initialValue={formatPlateDisplay(normalized)} size="compact" />
+    <div style={{maxWidth:'1000px',margin:'0 auto',padding:'24px 16px 40px'}}>
+      <div style={{marginBottom:'24px'}}>
+        <div style={{display:'flex',alignItems:'center',gap:'12px',flexWrap:'wrap'}}>
+          <Link href="/" style={{display:'flex',alignItems:'center',gap:'6px',fontSize:'14px',color:'#6b7280',textDecoration:'none',flexShrink:0}}>
+            <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18" />
+            </svg>
+            Terug
+          </Link>
+          <LicensePlateInput initialValue={formatPlateDisplay(normalized)} size="compact" />
+        </div>
       </div>
       {errorMessage && (
-        <ErrorMessage title="Fout" message={errorMessage} />
+        <div style={{background:'#fef2f2',border:'1px solid #fca5a5',borderRadius:'12px',padding:'16px',color:'#991b1b',fontSize:'14px'}}>
+          {errorMessage}
+        </div>
       )}
       {vehicle && (
-        <div className="space-y-4">
+        <div style={{display:'flex',flexDirection:'column',gap:'16px'}}>
           <VehicleHeader vehicle={vehicle} />
           <VehicleDataGrid vehicle={vehicle} />
         </div>

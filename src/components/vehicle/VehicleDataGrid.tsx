@@ -1,6 +1,7 @@
 ﻿import type { VehicleData } from "@/types/vehicle";
 import { formatPrice } from "@/lib/utils/formatters";
 import { AIAdvice } from "./AIAdvice";
+import { APKHistory } from "./APKHistory";
 
 interface Props { vehicle: VehicleData; }
 
@@ -85,6 +86,8 @@ export function VehicleDataGrid({ vehicle }: Props) {
         <Field label="APK resterende dagen" value={apkTekst} />
         <Field label="WAM verzekerd" value={vehicle.insuranceStatus === "insured" ? "Ja ✓" : vehicle.insuranceStatus === "not_insured" ? "Nee ✗" : "Onbekend"} />
       </Section>
+
+      <APKHistory history={vehicle.apkHistory} apkExpiryDateNL={vehicle.apkExpiryDateNL} />
 
       <AIAdvice vehicle={vehicle} />
 

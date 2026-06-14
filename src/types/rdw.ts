@@ -40,3 +40,25 @@ export interface RDWFuelRaw {
   nettomaximumvermogen?: string;
   co2_uitstoot_gecombineerd?: string;
 }
+
+export interface RDWKeuringRaw {
+  kenteken?: string;
+  meld_datum_door_keuringsinstantie?: string;
+  meld_tijd_door_keuringsinstantie?: string;
+  soort_melding_ki_omschrijving?: string;
+  vervaldatum_keuring?: string;
+  vervaldatum_keuring_dt?: string;
+}
+
+export interface RDWGebrekRaw {
+  kenteken?: string;
+  meld_datum_door_keuringsinstantie?: string;
+  meld_tijd_door_keuringsinstantie?: string;
+  gebrek_identificatie?: string;
+  aantal_gebreken_geconstateerd?: string;
+}
+
+export interface RDWGebrekOmschrijvingRaw {
+  gebrek_identificatie?: string;
+  gebrek_omschrijving?: string;
+}

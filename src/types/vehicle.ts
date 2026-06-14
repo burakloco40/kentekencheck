@@ -2,6 +2,14 @@
 export type InsuranceStatus = "insured" | "not_insured" | "unknown";
 export type ErrorCode = "INVALID_PLATE" | "NOT_FOUND" | "RATE_LIMITED" | "UPSTREAM_ERROR" | "INTERNAL_ERROR";
 
+export interface APKKeuring {
+  datum: string;
+  datumNL: string;
+  tijd: string;
+  soort: string;
+  gebreken: string[];
+}
+
 export interface VehicleData {
   plate: string;
   plateRaw: string;
@@ -29,6 +37,7 @@ export interface VehicleData {
   apkExpiryDateNL: string | null;
   apkStatus: APKStatus;
   apkDaysRemaining: number | null;
+  apkHistory: APKKeuring[];
   insuranceStatus: InsuranceStatus;
   fetchedAt: string;
 }

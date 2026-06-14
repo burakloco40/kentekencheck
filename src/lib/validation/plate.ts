@@ -13,11 +13,13 @@
   /^[A-Z]{1}\d{2}[A-Z]{3}$/,
 ];
 
-export function normalizePlate(input: string): string {
+export function normalizePlate(input: string | undefined | null): string {
+  if (!input) return "";
   return input.toUpperCase().replace(/[-\s]/g, "");
 }
 
-export function isValidPlate(input: string): boolean {
+export function isValidPlate(input: string | undefined | null): boolean {
+  if (!input) return false;
   const normalized = normalizePlate(input);
   if (normalized.length < 4 || normalized.length > 8) return false;
   return PLATE_PATTERNS.some((p) => p.test(normalized));
