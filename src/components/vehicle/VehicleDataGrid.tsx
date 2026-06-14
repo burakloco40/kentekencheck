@@ -2,6 +2,7 @@
 import { formatPrice } from "@/lib/utils/formatters";
 import { AIAdvice } from "./AIAdvice";
 import { APKHistory } from "./APKHistory";
+import { RecallActions } from "./RecallActions";
 
 interface Props { vehicle: VehicleData; }
 
@@ -51,6 +52,10 @@ export function VehicleDataGrid({ vehicle }: Props) {
   return (
     <div style={{display:'flex',flexDirection:'column',gap:'12px'}}>
 
+      {vehicle.hasRecallAction && (
+        <RecallActions actions={vehicle.recallActions} />
+      )}
+
       <Section title="Voertuig" emoji="🚗">
         <Field label="Merk" value={vehicle.brand} highlight />
         <Field label="Model" value={vehicle.model} highlight />
@@ -61,6 +66,8 @@ export function VehicleDataGrid({ vehicle }: Props) {
         <Field label="Deuren" value={vehicle.numberOfDoors} />
         <Field label="Zitplaatsen" value={vehicle.numberOfSeats} />
         <Field label="Eerste toelating" value={vehicle.firstAdmissionDateNL} />
+        <Field label="Laatste tenaamstelling" value={vehicle.lastRegistrationDateNL} />
+        {vehicle.isExported && <Field label="Export" value="Ja — geëxporteerd" />}
       </Section>
 
       <Section title="Motor & Techniek" emoji="⚙️">
@@ -83,7 +90,7 @@ export function VehicleDataGrid({ vehicle }: Props) {
 
       <Section title="APK & Verzekering" emoji="📋">
         <Field label="APK vervaldatum" value={vehicle.apkExpiryDateNL} highlight />
-        <Field label="APK resterende dagen" value={apkTekst} />
+        <Field label="APK status" value={apkTekst} />
         <Field label="WAM verzekerd" value={vehicle.insuranceStatus === "insured" ? "Ja ✓" : vehicle.insuranceStatus === "not_insured" ? "Nee ✗" : "Onbekend"} />
       </Section>
 

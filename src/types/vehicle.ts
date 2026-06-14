@@ -2,6 +2,11 @@
 export type InsuranceStatus = "insured" | "not_insured" | "unknown";
 export type ErrorCode = "INVALID_PLATE" | "NOT_FOUND" | "RATE_LIMITED" | "UPSTREAM_ERROR" | "INTERNAL_ERROR";
 
+export interface Terugroepactie {
+  referentie: string;
+  status: string;
+}
+
 export interface APKKeuring {
   datum: string;
   datumNL: string;
@@ -41,6 +46,7 @@ export interface VehicleData {
   apkHistory: APKKeuring[];
   insuranceStatus: InsuranceStatus;
   hasRecallAction: boolean;
+  recallActions: Terugroepactie[];
   isExported: boolean;
   fetchedAt: string;
 }

@@ -6,6 +6,7 @@ export const RDW_DATASETS = {
   KEURINGEN: "sgfe-77wx",
   GEBREKEN: "a34c-vvps",
   GEBREK_OMSCHRIJVING: "hx2c-gt7k",
+  TERUGROEP: "t49b-isb7",
 } as const;
 export const CACHE_REVALIDATE_SECONDS = 3600;
 export const APK_WARNING_DAYS = 30;

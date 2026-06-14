@@ -1,12 +1,12 @@
-﻿import { CACHE_REVALIDATE_SECONDS, RDW_BASE_URL, RDW_DATASETS } from "@/lib/utils/constants";
+﻿import { RDW_BASE_URL, RDW_DATASETS } from "@/lib/utils/constants";
 import { vehicleUrl, apkUrl, fuelUrl } from "./endpoints";
-import type { RDWVehicleRaw, RDWApkRaw, RDWFuelRaw, RDWKeuringRaw, RDWGebrekRaw, RDWGebrekOmschrijvingRaw } from "@/types/rdw";
+import type { RDWVehicleRaw, RDWApkRaw, RDWFuelRaw, RDWKeuringRaw, RDWGebrekRaw, RDWGebrekOmschrijvingRaw, RDWTerugroepRaw } from "@/types/rdw";
 
 async function rdwFetch<T>(url: string): Promise<T[]> {
   const res = await fetch(url, {
-    next: { revalidate: CACHE_REVALIDATE_SECONDS },
+    cache: "no-store",
     headers: { Accept: "application/json" },
-  } as RequestInit);
+  });
   if (!res.ok) throw new Error(`RDW API error: ${res.status}`);
   return res.json() as Promise<T[]>;
 }
@@ -52,13 +52,21 @@ export async function fetchGebrekOmschrijving(gebrekId: string): Promise<string 
   } catch { return null; }
 }
 
+export async function fetchTerugroepacties(plate: string): Promise<RDWTerugroepRaw[]> {
+  try {
+    const url = `${RDW_BASE_URL}/${RDW_DATASETS.TERUGROEP}.json?kenteken=${plate.toUpperCase()}&$limit=10`;
+    return await rdwFetch<RDWTerugroepRaw>(url);
+  } catch { return []; }
+}
+
 export async function fetchAllRDWData(plate: string) {
-  const [vehicleBase, apkData, fuelData, keuringen, gebreken] = await Promise.allSettled([
+  const [vehicleBase, apkData, fuelData, keuringen, gebreken, terugroepacties] = await Promise.allSettled([
     fetchVehicleBase(plate),
     fetchAPKData(plate),
     fetchFuelData(plate),
     fetchKeuringen(plate),
     fetchGebreken(plate),
+    fetchTerugroepacties(plate),
   ]);
   return {
     vehicleBase: vehicleBase.status === "fulfilled" ? vehicleBase.value : null,
@@ -66,6 +74,7 @@ export async function fetchAllRDWData(plate: string) {
     fuelData: fuelData.status === "fulfilled" ? fuelData.value : null,
     keuringen: keuringen.status === "fulfilled" ? keuringen.value : [],
     gebreken: gebreken.status === "fulfilled" ? gebreken.value : [],
+    terugroepacties: terugroepacties.status === "fulfilled" ? terugroepacties.value : [],
     upstreamError: vehicleBase.status === "rejected" ? (vehicleBase.reason as Error) : null,
   };
 }

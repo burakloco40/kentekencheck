@@ -1,5 +1,5 @@
-import type { RDWVehicleRaw, RDWApkRaw, RDWFuelRaw, RDWKeuringRaw, RDWGebrekRaw } from "@/types/rdw";
-import type { VehicleData, APKStatus, InsuranceStatus, APKKeuring } from "@/types/vehicle";
+import type { RDWVehicleRaw, RDWApkRaw, RDWFuelRaw, RDWKeuringRaw, RDWGebrekRaw, RDWTerugroepRaw } from "@/types/rdw";
+import type { VehicleData, APKStatus, InsuranceStatus, APKKeuring, Terugroepactie } from "@/types/vehicle";
 import { formatDateNL, formatDateISO, daysFromToday, formatFuelType, formatVehicleType, formatColor, formatBodyStyle, kwToHp } from "@/lib/utils/formatters";
 import { formatPlateDisplay } from "@/lib/validation/plate";
 
@@ -25,7 +25,8 @@ export function transformRDWData(
   fuelData: RDWFuelRaw | null,
   keuringen: RDWKeuringRaw[] = [],
   gebreken: RDWGebrekRaw[] = [],
-  gebrekOmschrijvingen: Map<string, string> = new Map()
+  gebrekOmschrijvingen: Map<string, string> = new Map(),
+  terugroepacties: RDWTerugroepRaw[] = []
 ): VehicleData {
   const fuelType = fuelData?.brandstof_omschrijving ?? vehicleBase.brandstof_omschrijving ?? null;
   const rawDisplacement = fuelData?.cilinderinhoud ?? vehicleBase.cilinderinhoud ?? null;
@@ -63,7 +64,12 @@ export function transformRDWData(
     };
   });
 
-  const hasRecallAction = vehicleBase.openstaande_terugroepactie_indicator === "Ja";
+  const recallActions: Terugroepactie[] = terugroepacties.map(t => ({
+    referentie: t.referentiecode_rdw ?? "Onbekend",
+    status: t.status ?? "Onbekend",
+  }));
+
+  const hasRecallAction = recallActions.length > 0;
   const isExported = vehicleBase.export_indicator === "Ja";
 
   return {
@@ -97,6 +103,7 @@ export function transformRDWData(
     apkHistory,
     insuranceStatus,
     hasRecallAction,
+    recallActions,
     isExported,
     fetchedAt: new Date().toISOString(),
   };

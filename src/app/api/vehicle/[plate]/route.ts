@@ -4,8 +4,6 @@ import { fetchAllRDWData, fetchGebrekOmschrijving } from "@/lib/rdw/client";
 import { transformRDWData } from "@/lib/rdw/transformer";
 import type { ApiError } from "@/types/vehicle";
 
-const store = new Map<string, { count: number; resetAt: number }>();
-
 export async function GET(
   req: NextRequest,
   { params }: { params: Promise<{ plate: string }> }
@@ -57,7 +55,7 @@ export async function GET(
         if (omschrijving) omschrijvingen.set(id, omschrijving);
       })
     );
-    const data = transformRDWData(plate, r.vehicleBase, r.apkData, r.fuelData, r.keuringen, r.gebreken, omschrijvingen);
+    const data = transformRDWData(plate, r.vehicleBase, r.apkData, r.fuelData, r.keuringen, r.gebreken, omschrijvingen, r.terugroepacties);
     return NextResponse.json({ success: true, data }, { status: 200 });
   } catch {
     return NextResponse.json({

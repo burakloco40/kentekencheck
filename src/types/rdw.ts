@@ -65,3 +65,10 @@ export interface RDWGebrekOmschrijvingRaw {
   gebrek_identificatie?: string;
   gebrek_omschrijving?: string;
 }
+
+export interface RDWTerugroepRaw {
+  kenteken?: string;
+  referentiecode_rdw?: string;
+  code_status?: string;
+  status?: string;
+}
