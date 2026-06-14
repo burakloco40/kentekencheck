@@ -33,6 +33,11 @@ export interface VehicleData {
   powerHP: number | null;
   torque: number | null;
   co2Emission: number | null;
+  fuelConsumptionCombined: number | null;
+  fuelConsumptionCity: number | null;
+  fuelConsumptionHighway: number | null;
+  emissionLevel: string | null;
+  soundLevel: number | null;
   massEmpty: number | null;
   massRijklaar: number | null;
   massMax: number | null;

@@ -51,6 +51,19 @@ export function transformRDWData(
   const datumNLRegistratie = vehicleBase.datum_eerste_tenaamstelling_in_nederland ?? null;
   const isImport = !!(datumToelating && datumNLRegistratie && datumToelating !== datumNLRegistratie);
 
+  const fuelCombined = fuelData?.brandstofverbruik_gecombineerd
+    ? parseFloat(fuelData.brandstofverbruik_gecombineerd)
+    : null;
+  const fuelCity = fuelData?.brandstofverbruik_stad
+    ? parseFloat(fuelData.brandstofverbruik_stad)
+    : null;
+  const fuelHighway = fuelData?.brandstofverbruik_buiten_de_bebouwde_kom
+    ? parseFloat(fuelData.brandstofverbruik_buiten_de_bebouwde_kom)
+    : null;
+  const soundLevel = fuelData?.geluidsniveau_rijdend
+    ? parseInt(fuelData.geluidsniveau_rijdend, 10)
+    : null;
+
   const apkHistory: APKKeuring[] = keuringen.map(k => {
     const datum = k.meld_datum_door_keuringsinstantie ?? "";
     const keuringGebreken = gebreken
@@ -73,9 +86,6 @@ export function transformRDWData(
     status: t.status ?? "Onbekend",
   }));
 
-  const hasRecallAction = recallActions.length > 0;
-  const isExported = vehicleBase.export_indicator === "Ja";
-
   return {
     plate: formatPlateDisplay(plate),
     plateRaw: plate.toUpperCase(),
@@ -94,6 +104,11 @@ export function transformRDWData(
     powerHP: kwToHp(powerKW),
     torque: null,
     co2Emission: rawCO2 ? parseInt(rawCO2, 10) : null,
+    fuelConsumptionCombined: fuelCombined,
+    fuelConsumptionCity: fuelCity,
+    fuelConsumptionHighway: fuelHighway,
+    emissionLevel: fuelData?.uitlaatemissieniveau ?? null,
+    soundLevel,
     massEmpty: vehicleBase.massa_ledig_voertuig ? parseInt(vehicleBase.massa_ledig_voertuig, 10) : null,
     massRijklaar: vehicleBase.massa_rijklaar ? parseInt(vehicleBase.massa_rijklaar, 10) : null,
     massMax: vehicleBase.toegestane_maximum_massa_voertuig ? parseInt(vehicleBase.toegestane_maximum_massa_voertuig, 10) : null,
@@ -109,9 +124,9 @@ export function transformRDWData(
     apkDaysRemaining: apkDays !== null && apkStatus !== "unknown" ? apkDays : null,
     apkHistory,
     insuranceStatus,
-    hasRecallAction,
+    hasRecallAction: recallActions.length > 0,
     recallActions,
-    isExported,
+    isExported: vehicleBase.export_indicator === "Ja",
     fetchedAt: new Date().toISOString(),
   };
 }

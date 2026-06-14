@@ -43,6 +43,12 @@ export interface RDWFuelRaw {
   cilinderinhoud?: string;
   nettomaximumvermogen?: string;
   co2_uitstoot_gecombineerd?: string;
+  brandstofverbruik_gecombineerd?: string;
+  brandstofverbruik_stad?: string;
+  brandstofverbruik_buiten_de_bebouwde_kom?: string;
+  uitlaatemissieniveau?: string;
+  emissiecode_omschrijving?: string;
+  geluidsniveau_rijdend?: string;
 }
 
 export interface RDWKeuringRaw {

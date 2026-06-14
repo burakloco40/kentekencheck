@@ -69,32 +69,40 @@ export function VehicleDataGrid({ vehicle }: Props) {
         <Field label="Eerste NL registratie" value={vehicle.firstRegistrationNLDateNL} />
         <Field label="Laatste tenaamstelling" value={vehicle.lastRegistrationDateNL} />
         <Field label="Herkomst" value={vehicle.isImport ? "Import" : "Nederlands"} />
-        {vehicle.isExported && <Field label="Export" value="Ja — geëxporteerd" />}
+        {vehicle.isExported && <Field label="Export" value="Ja" />}
       </Section>
 
-      <Section title="Motor & Techniek" emoji="⚙️">
+      <Section title="Motor en Techniek" emoji="⚙️">
         <Field label="Brandstof" value={vehicle.fuelType} highlight />
-        <Field label="Vermogen" value={vehicle.powerHP} unit="pk" highlight />
-        <Field label="Vermogen" value={vehicle.powerKW} unit="kW" />
+        <Field label="Vermogen pk" value={vehicle.powerHP} unit="pk" highlight />
+        <Field label="Vermogen kW" value={vehicle.powerKW} unit="kW" />
         <Field label="Cilinderinhoud" value={vehicle.engineDisplacement} unit="cc" />
         <Field label="Aantal cilinders" value={vehicle.numberOfCylinders} />
-        <Field label="CO₂ uitstoot" value={vehicle.co2Emission} unit="g/km" />
+        <Field label="CO2 uitstoot" value={vehicle.co2Emission} unit="g/km" />
+        <Field label="Emissienorm" value={vehicle.emissionLevel} />
+        <Field label="Geluidsniveau" value={vehicle.soundLevel} unit="dB" />
       </Section>
 
-      <Section title="Gewicht & Afmetingen" emoji="⚖️">
+      <Section title="Brandstofverbruik" emoji="⛽">
+        <Field label="Gecombineerd" value={vehicle.fuelConsumptionCombined} unit="l/100km" highlight />
+        <Field label="Stad" value={vehicle.fuelConsumptionCity} unit="l/100km" />
+        <Field label="Snelweg" value={vehicle.fuelConsumptionHighway} unit="l/100km" />
+      </Section>
+
+      <Section title="Gewicht" emoji="⚖️">
         <Field label="Leeg gewicht" value={vehicle.massEmpty} unit="kg" />
         <Field label="Rijklaar gewicht" value={vehicle.massRijklaar} unit="kg" />
-        <Field label="Max. toegestane massa" value={vehicle.massMax} unit="kg" />
+        <Field label="Max. massa" value={vehicle.massMax} unit="kg" />
       </Section>
 
       <Section title="Financieel" emoji="💶">
         <Field label="Catalogusprijs" value={vehicle.catalogPrice ? formatPrice(vehicle.catalogPrice) : null} highlight />
       </Section>
 
-      <Section title="APK & Verzekering" emoji="📋">
+      <Section title="APK en Verzekering" emoji="📋">
         <Field label="APK vervaldatum" value={vehicle.apkExpiryDateNL} highlight />
         <Field label="APK status" value={apkTekst} />
-        <Field label="WAM verzekerd" value={vehicle.insuranceStatus === "insured" ? "Ja ✓" : vehicle.insuranceStatus === "not_insured" ? "Nee ✗" : "Onbekend"} />
+        <Field label="WAM verzekerd" value={vehicle.insuranceStatus === "insured" ? "Ja" : vehicle.insuranceStatus === "not_insured" ? "Nee" : "Onbekend"} />
       </Section>
 
       <APKHistory history={vehicle.apkHistory} apkExpiryDateNL={vehicle.apkExpiryDateNL} />
@@ -102,7 +110,7 @@ export function VehicleDataGrid({ vehicle }: Props) {
       <AIAdvice vehicle={vehicle} />
 
       <p style={{textAlign:'center',fontSize:'11px',color:'#9ca3af',padding:'4px 0 8px'}}>
-        Gegevens afkomstig van RDW Open Data · {new Date(vehicle.fetchedAt).toLocaleString("nl-NL")}
+        Gegevens afkomstig van RDW Open Data
       </p>
     </div>
   );
