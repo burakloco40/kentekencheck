@@ -47,6 +47,10 @@ export function transformRDWData(
   const rawPrice = vehicleBase.catalogusprijs;
   const catalogPrice = rawPrice && rawPrice !== "0" ? parseInt(rawPrice, 10) : null;
 
+  const datumToelating = vehicleBase.datum_eerste_toelating ?? null;
+  const datumNLRegistratie = vehicleBase.datum_eerste_tenaamstelling_in_nederland ?? null;
+  const isImport = !!(datumToelating && datumNLRegistratie && datumToelating !== datumNLRegistratie);
+
   const apkHistory: APKKeuring[] = keuringen.map(k => {
     const datum = k.meld_datum_door_keuringsinstantie ?? "";
     const keuringGebreken = gebreken
@@ -83,6 +87,7 @@ export function transformRDWData(
     secondaryColor: vehicleBase.tweede_kleur ? formatColor(vehicleBase.tweede_kleur) : null,
     numberOfDoors: vehicleBase.aantal_deuren ? parseInt(vehicleBase.aantal_deuren, 10) : null,
     numberOfSeats: vehicleBase.aantal_zitplaatsen ? parseInt(vehicleBase.aantal_zitplaatsen, 10) : null,
+    numberOfCylinders: vehicleBase.aantal_cilinders ? parseInt(vehicleBase.aantal_cilinders, 10) : null,
     fuelType: formatFuelType(fuelType),
     engineDisplacement: rawDisplacement ? parseInt(rawDisplacement, 10) : null,
     powerKW,
@@ -95,7 +100,9 @@ export function transformRDWData(
     catalogPrice,
     firstAdmissionDate: formatDateISO(vehicleBase.datum_eerste_toelating),
     firstAdmissionDateNL: formatDateNL(vehicleBase.datum_eerste_toelating),
+    firstRegistrationNLDateNL: formatDateNL(vehicleBase.datum_eerste_tenaamstelling_in_nederland),
     lastRegistrationDateNL: formatDateNL(vehicleBase.datum_tenaamstelling),
+    isImport,
     apkExpiryDate: apkISO,
     apkExpiryDateNL: formatDateNL(apkRaw),
     apkStatus,

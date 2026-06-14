@@ -7,7 +7,6 @@ export function VehicleHeader({ vehicle }: Props) {
   const apkBorder = vehicle.apkStatus === "expired" ? "#fca5a5" : "#86efac";
   const apkText = vehicle.apkStatus === "expired" ? "#991b1b" : "#166534";
   const apkLabel = vehicle.apkStatus === "expired" ? "✕ APK verlopen" : vehicle.apkStatus === "valid" ? "✓ APK geldig" : "– APK onbekend";
-
   const insBg = vehicle.insuranceStatus === "insured" ? "#f0fdf4" : vehicle.insuranceStatus === "not_insured" ? "#fef2f2" : "#f9fafb";
   const insBorder = vehicle.insuranceStatus === "insured" ? "#86efac" : vehicle.insuranceStatus === "not_insured" ? "#fca5a5" : "#e5e7eb";
   const insText = vehicle.insuranceStatus === "insured" ? "#166534" : vehicle.insuranceStatus === "not_insured" ? "#991b1b" : "#6b7280";
@@ -17,7 +16,6 @@ export function VehicleHeader({ vehicle }: Props) {
     <div style={{background:'#0f2040',borderRadius:'16px',padding:'24px 28px',color:'white'}}>
       <div style={{display:'flex',flexWrap:'wrap',justifyContent:'space-between',alignItems:'flex-start',gap:'20px'}}>
 
-        {/* Links: info */}
         <div style={{flex:1,minWidth:'240px'}}>
           <p style={{fontSize:'11px',fontWeight:600,letterSpacing:'0.12em',textTransform:'uppercase',color:'rgba(255,255,255,0.45)',margin:'0 0 6px 0'}}>{vehicle.vehicleType}</p>
           <h1 style={{fontSize:'32px',fontWeight:800,color:'white',margin:'0 0 4px 0',lineHeight:1.1}}>
@@ -29,19 +27,23 @@ export function VehicleHeader({ vehicle }: Props) {
             </p>
           )}
 
-          {/* Status badges */}
           <div style={{display:'flex',flexWrap:'wrap',gap:'8px',marginBottom:'20px'}}>
             <span style={{fontSize:'12px',fontWeight:700,padding:'5px 12px',borderRadius:'20px',border:'2px solid '+apkBorder,background:apkBg,color:apkText}}>{apkLabel}</span>
             <span style={{fontSize:'12px',fontWeight:700,padding:'5px 12px',borderRadius:'20px',border:'2px solid '+insBorder,background:insBg,color:insText}}>{insLabel}</span>
+            {vehicle.isImport && (
+              <span style={{fontSize:'12px',fontWeight:700,padding:'5px 12px',borderRadius:'20px',border:'2px solid #fed7aa',background:'#fff7ed',color:'#9a3412'}}>🌍 Import</span>
+            )}
+            {!vehicle.isImport && (
+              <span style={{fontSize:'12px',fontWeight:700,padding:'5px 12px',borderRadius:'20px',border:'2px solid #86efac',background:'#f0fdf4',color:'#166534'}}>✓ Nederlands</span>
+            )}
             {vehicle.hasRecallAction && (
               <span style={{fontSize:'12px',fontWeight:700,padding:'5px 12px',borderRadius:'20px',border:'2px solid #fca5a5',background:'#fef2f2',color:'#991b1b'}}>⚠ Terugroepactie</span>
             )}
             {vehicle.isExported && (
-              <span style={{fontSize:'12px',fontWeight:700,padding:'5px 12px',borderRadius:'20px',border:'2px solid #e5e7eb',background:'#f9fafb',color:'#6b7280'}}>Geëxporteerd</span>
+              <span style={{fontSize:'12px',fontWeight:700,padding:'5px 12px',borderRadius:'20px',border:'2px solid #e5e7eb',background:'#f9fafb',color:'#6b7280'}}>📦 Geëxporteerd</span>
             )}
           </div>
 
-          {/* Technische highlights */}
           <div style={{display:'flex',flexWrap:'wrap',gap:'24px'}}>
             {vehicle.powerHP && (
               <div>
@@ -64,7 +66,6 @@ export function VehicleHeader({ vehicle }: Props) {
           </div>
         </div>
 
-        {/* Rechts: kenteken + tenaamstelling */}
         <div style={{flexShrink:0,display:'flex',flexDirection:'column',alignItems:'center',gap:'12px'}}>
           <div style={{display:'inline-flex',borderRadius:'6px',border:'2px solid rgba(212,160,23,0.4)',overflow:'hidden',boxShadow:'0 4px 12px rgba(0,0,0,0.3)'}}>
             <div style={{background:'#162d58',width:'36px',display:'flex',flexDirection:'column',alignItems:'center',justifyContent:'center',gap:'4px',padding:'4px'}}>

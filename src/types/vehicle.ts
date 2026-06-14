@@ -26,6 +26,7 @@ export interface VehicleData {
   secondaryColor: string | null;
   numberOfDoors: number | null;
   numberOfSeats: number | null;
+  numberOfCylinders: number | null;
   fuelType: string;
   engineDisplacement: number | null;
   powerKW: number | null;
@@ -38,7 +39,9 @@ export interface VehicleData {
   catalogPrice: number | null;
   firstAdmissionDate: string | null;
   firstAdmissionDateNL: string | null;
+  firstRegistrationNLDateNL: string | null;
   lastRegistrationDateNL: string | null;
+  isImport: boolean;
   apkExpiryDate: string | null;
   apkExpiryDateNL: string | null;
   apkStatus: APKStatus;

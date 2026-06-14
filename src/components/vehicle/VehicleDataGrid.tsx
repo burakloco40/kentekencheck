@@ -66,7 +66,9 @@ export function VehicleDataGrid({ vehicle }: Props) {
         <Field label="Deuren" value={vehicle.numberOfDoors} />
         <Field label="Zitplaatsen" value={vehicle.numberOfSeats} />
         <Field label="Eerste toelating" value={vehicle.firstAdmissionDateNL} />
+        <Field label="Eerste NL registratie" value={vehicle.firstRegistrationNLDateNL} />
         <Field label="Laatste tenaamstelling" value={vehicle.lastRegistrationDateNL} />
+        <Field label="Herkomst" value={vehicle.isImport ? "Import" : "Nederlands"} />
         {vehicle.isExported && <Field label="Export" value="Ja — geëxporteerd" />}
       </Section>
 
@@ -75,6 +77,7 @@ export function VehicleDataGrid({ vehicle }: Props) {
         <Field label="Vermogen" value={vehicle.powerHP} unit="pk" highlight />
         <Field label="Vermogen" value={vehicle.powerKW} unit="kW" />
         <Field label="Cilinderinhoud" value={vehicle.engineDisplacement} unit="cc" />
+        <Field label="Aantal cilinders" value={vehicle.numberOfCylinders} />
         <Field label="CO₂ uitstoot" value={vehicle.co2Emission} unit="g/km" />
       </Section>
 

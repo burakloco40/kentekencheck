@@ -17,6 +17,7 @@
   catalogusprijs?: string;
   datum_eerste_toelating?: string;
   datum_tenaamstelling?: string;
+  datum_eerste_tenaamstelling_in_nederland?: string;
   vervaldatum_apk?: string;
   co2_uitstoot_gecombineerd?: string;
   wam_verzekerd?: string;
