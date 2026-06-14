@@ -16,6 +16,8 @@ export function VehicleHeader({ vehicle }: Props) {
   return (
     <div style={{background:'#0f2040',borderRadius:'16px',padding:'24px 28px',color:'white'}}>
       <div style={{display:'flex',flexWrap:'wrap',justifyContent:'space-between',alignItems:'flex-start',gap:'20px'}}>
+
+        {/* Links: info */}
         <div style={{flex:1,minWidth:'240px'}}>
           <p style={{fontSize:'11px',fontWeight:600,letterSpacing:'0.12em',textTransform:'uppercase',color:'rgba(255,255,255,0.45)',margin:'0 0 6px 0'}}>{vehicle.vehicleType}</p>
           <h1 style={{fontSize:'32px',fontWeight:800,color:'white',margin:'0 0 4px 0',lineHeight:1.1}}>
@@ -27,17 +29,19 @@ export function VehicleHeader({ vehicle }: Props) {
             </p>
           )}
 
+          {/* Status badges */}
           <div style={{display:'flex',flexWrap:'wrap',gap:'8px',marginBottom:'20px'}}>
             <span style={{fontSize:'12px',fontWeight:700,padding:'5px 12px',borderRadius:'20px',border:'2px solid '+apkBorder,background:apkBg,color:apkText}}>{apkLabel}</span>
             <span style={{fontSize:'12px',fontWeight:700,padding:'5px 12px',borderRadius:'20px',border:'2px solid '+insBorder,background:insBg,color:insText}}>{insLabel}</span>
             {vehicle.hasRecallAction && (
-              <span style={{fontSize:'12px',fontWeight:700,padding:'5px 12px',borderRadius:'20px',border:'2px solid #fca5a5',background:'#fef2f2',color:'#991b1b'}}>⚠ Openstaande terugroepactie</span>
+              <span style={{fontSize:'12px',fontWeight:700,padding:'5px 12px',borderRadius:'20px',border:'2px solid #fca5a5',background:'#fef2f2',color:'#991b1b'}}>⚠ Terugroepactie</span>
             )}
             {vehicle.isExported && (
               <span style={{fontSize:'12px',fontWeight:700,padding:'5px 12px',borderRadius:'20px',border:'2px solid #e5e7eb',background:'#f9fafb',color:'#6b7280'}}>Geëxporteerd</span>
             )}
           </div>
 
+          {/* Technische highlights */}
           <div style={{display:'flex',flexWrap:'wrap',gap:'24px'}}>
             {vehicle.powerHP && (
               <div>
@@ -60,7 +64,8 @@ export function VehicleHeader({ vehicle }: Props) {
           </div>
         </div>
 
-        <div style={{flexShrink:0}}>
+        {/* Rechts: kenteken + tenaamstelling */}
+        <div style={{flexShrink:0,display:'flex',flexDirection:'column',alignItems:'center',gap:'12px'}}>
           <div style={{display:'inline-flex',borderRadius:'6px',border:'2px solid rgba(212,160,23,0.4)',overflow:'hidden',boxShadow:'0 4px 12px rgba(0,0,0,0.3)'}}>
             <div style={{background:'#162d58',width:'36px',display:'flex',flexDirection:'column',alignItems:'center',justifyContent:'center',gap:'4px',padding:'4px'}}>
               <div style={{display:'flex',flexWrap:'wrap',justifyContent:'center',width:'18px',gap:'2px'}}>
@@ -74,12 +79,15 @@ export function VehicleHeader({ vehicle }: Props) {
               <span style={{fontFamily:'Courier Prime, monospace',fontSize:'24px',fontWeight:700,color:'#0f2040',letterSpacing:'0.15em'}}>{vehicle.plate}</span>
             </div>
           </div>
+
           {vehicle.lastRegistrationDateNL && (
-            <p style={{fontSize:'11px',color:'rgba(255,255,255,0.35)',textAlign:'center',margin:'8px 0 0',fontWeight:500}}>
-              Tenaamstelling: {vehicle.lastRegistrationDateNL}
-            </p>
+            <div style={{background:'rgba(255,255,255,0.08)',border:'1px solid rgba(255,255,255,0.15)',borderRadius:'10px',padding:'10px 16px',textAlign:'center'}}>
+              <p style={{fontSize:'11px',color:'rgba(255,255,255,0.45)',margin:'0 0 4px',textTransform:'uppercase',letterSpacing:'0.08em',fontWeight:600}}>Laatste tenaamstelling</p>
+              <p style={{fontSize:'15px',color:'white',fontWeight:700,margin:0}}>{vehicle.lastRegistrationDateNL}</p>
+            </div>
           )}
         </div>
+
       </div>
     </div>
   );
