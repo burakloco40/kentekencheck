@@ -5,58 +5,20 @@ import { isValidPlate, normalizePlate, formatPlateDisplay } from "@/lib/validati
 import { VehicleHeader } from "@/components/vehicle/VehicleHeader";
 import { VehicleDataGrid } from "@/components/vehicle/VehicleDataGrid";
 import { LicensePlateInput } from "@/components/search/LicensePlateInput";
-import type { VehicleData, ErrorCode } from "@/types/vehicle";
+import { ErrorMessage } from "@/components/ui/ErrorMessage";
+import { fetchAllRDWData, fetchGebrekOmschrijving } from "@/lib/rdw/client";
+import { transformRDWData } from "@/lib/rdw/transformer";
 
 interface PageProps {
   params: Promise<{ kenteken: string }>;
 }
 
-interface VehicleSuccess { success: true; data: VehicleData; }
-interface VehicleError { success: false; error: ErrorCode; message: string; }
-type VehicleResult = VehicleSuccess | VehicleError;
-
-async function getData(plate: string): Promise<VehicleResult> {
-  const base = process.env.VERCEL_URL
-    ? "https://kentekencheckapp.vercel.app"
-    : "http://localhost:3000";
-  const res = await fetch(`${base}/api/vehicle/${plate}`, { cache: "no-store" });
-  return res.json() as Promise<VehicleResult>;
-}
-
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { kenteken } = await params;
-  const normalized = normalizePlate(kenteken);
-  const display = formatPlateDisplay(normalized);
-
-  try {
-    const result = await getData(normalized);
-    if (result.success && result.data) {
-      const v = result.data;
-      const title = `Kenteken ${display} — ${v.brand} ${v.model} ${v.firstAdmissionDateNL ?? ""}`;
-      const description = `Voertuiggegevens voor ${display}. ${v.brand} ${v.model}, ${v.fuelType}, ${v.powerHP ? v.powerHP + " pk, " : ""}APK tot ${v.apkExpiryDateNL ?? "onbekend"}.`;
-      return {
-        title,
-        description,
-        openGraph: {
-          title,
-          description,
-          url: `https://kentekencheckapp.vercel.app/voertuig/${normalized}`,
-          type: "website",
-          locale: "nl_NL",
-          siteName: "Kentekencheck",
-        },
-        alternates: {
-          canonical: `https://kentekencheckapp.vercel.app/voertuig/${normalized}`,
-        },
-      };
-    }
-  } catch {
-    // fallback
-  }
-
+  const display = formatPlateDisplay(normalizePlate(kenteken));
   return {
-    title: `Kenteken ${display}`,
-    description: `Voertuiggegevens voor kenteken ${display} via het officiële RDW register.`,
+    title: "Kenteken " + display,
+    description: "Voertuiggegevens voor " + display,
   };
 }
 
@@ -65,9 +27,32 @@ export default async function Page({ params }: PageProps) {
   const normalized = normalizePlate(kenteken);
   if (!isValidPlate(normalized)) notFound();
 
-  const result = await getData(normalized);
-  const vehicle = result.success ? result.data : null;
-  const errorMessage = !result.success ? result.message : null;
+  let vehicle = null;
+  let errorMessage: string | null = null;
+
+  try {
+    const rdw = await fetchAllRDWData(normalized);
+    console.log("keuringen:", rdw.keuringen.length, "gebreken:", rdw.gebreken.length);
+    if (rdw.upstreamError) {
+      errorMessage = "RDW is tijdelijk niet bereikbaar. Probeer het later opnieuw.";
+    } else if (!rdw.vehicleBase) {
+      errorMessage = "Kenteken " + normalized + " niet gevonden in het RDW register.";
+    } else {
+      const gebrekIds = [...new Set(rdw.gebreken.map(g => g.gebrek_identificatie).filter(Boolean))] as string[];
+      const omschrijvingen = new Map<string, string>();
+      await Promise.all(
+        gebrekIds.map(async (id) => {
+          const omschrijving = await fetchGebrekOmschrijving(id);
+          if (omschrijving) omschrijvingen.set(id, omschrijving);
+        })
+      );
+      vehicle = transformRDWData(normalized, rdw.vehicleBase, rdw.apkData, rdw.fuelData, rdw.keuringen, rdw.gebreken, omschrijvingen);
+      console.log("apkHistory length:", vehicle.apkHistory.length);
+    }
+  } catch (err) {
+    console.log("ERROR:", err);
+    errorMessage = "Er is een fout opgetreden. Probeer het later opnieuw.";
+  }
 
   return (
     <div style={{maxWidth:'1000px',margin:'0 auto',padding:'24px 16px 40px'}}>

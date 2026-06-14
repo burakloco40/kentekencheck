@@ -1,31 +1,70 @@
 import type { Metadata } from "next";
+import { notFound } from "next/navigation";
+import Link from "next/link";
+import { isValidPlate, normalizePlate, formatPlateDisplay } from "@/lib/validation/plate";
+import { VehicleHeader } from "@/components/vehicle/VehicleHeader";
+import { VehicleDataGrid } from "@/components/vehicle/VehicleDataGrid";
 import { LicensePlateInput } from "@/components/search/LicensePlateInput";
+import type { VehicleData, ErrorCode } from "@/types/vehicle";
 
-export const metadata: Metadata = {
-  title: "Kentekencheck — Gratis Nederlands kenteken opzoeken",
-  description: "Gratis Nederlands kenteken opzoeken.",
-};
+interface PageProps {
+  params: Promise<{ kenteken: string }>;
+}
 
-export default function HomePage() {
+interface VehicleSuccess { success: true; data: VehicleData; }
+interface VehicleError { success: false; error: ErrorCode; message: string; }
+type VehicleResult = VehicleSuccess | VehicleError;
+
+async function getData(plate: string): Promise<VehicleResult> {
+  const base = process.env.VERCEL_URL
+    ? "https://kentekencheckapp.vercel.app"
+    : "http://localhost:3000";
+  const res = await fetch(`${base}/api/vehicle/${plate}`, { cache: "no-store" });
+  return res.json() as Promise<VehicleResult>;
+}
+
+export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
+  const { kenteken } = await params;
+  const display = formatPlateDisplay(normalizePlate(kenteken));
+  return {
+    title: "Kenteken " + display,
+    description: "Voertuiggegevens voor " + display,
+  };
+}
+
+export default async function Page({ params }: PageProps) {
+  const { kenteken } = await params;
+  const normalized = normalizePlate(kenteken);
+  if (!isValidPlate(normalized)) notFound();
+
+  const result = await getData(normalized);
+  const vehicle = result.success ? result.data : null;
+  const errorMessage = !result.success ? result.message : null;
+
   return (
-    <main>
-      <section style={{background:'linear-gradient(135deg, #0a1628 0%, #0f2040 50%, #162d58 100%)',color:'white',padding:'80px 16px'}}>
-        <div style={{maxWidth:'760px',margin:'0 auto',textAlign:'center'}}>
-          <h1 style={{fontSize:'clamp(36px,6vw,64px)',fontWeight:900,color:'white',margin:'0 0 20px',lineHeight:1.05}}>
-            Kenteken <span style={{color:'#F5C518'}}>opzoeken</span>
-          </h1>
-          <p style={{fontSize:'18px',color:'rgba(255,255,255,0.55)',margin:'0 auto 44px',maxWidth:'420px',lineHeight:1.6}}>
-            Voer een Nederlands kenteken in en bekijk direct alle voertuiggegevens.
-          </p>
-          <div style={{display:'flex',justifyContent:'center',marginBottom:'20px'}}>
-            <LicensePlateInput autoFocus size="hero" />
-          </div>
-          <p style={{fontSize:'13px',color:'rgba(255,255,255,0.3)',margin:0}}>
-            Probeer bijv.{' '}
-            <a href="/voertuig/SH239S" style={{fontFamily:'Courier Prime, monospace',color:'rgba(255,255,255,0.5)',textDecoration:'none',background:'rgba(255,255,255,0.08)',padding:'2px 8px',borderRadius:'4px',border:'1px solid rgba(255,255,255,0.15)'}}>SH-239-S</a>
-          </p>
+    <div style={{maxWidth:'1000px',margin:'0 auto',padding:'24px 16px 40px'}}>
+      <div style={{marginBottom:'24px'}}>
+        <div style={{display:'flex',alignItems:'center',gap:'12px',flexWrap:'wrap'}}>
+          <Link href="/" style={{display:'flex',alignItems:'center',gap:'6px',fontSize:'14px',color:'#6b7280',textDecoration:'none',flexShrink:0}}>
+            <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18" />
+            </svg>
+            Terug
+          </Link>
+          <LicensePlateInput initialValue={formatPlateDisplay(normalized)} size="compact" />
         </div>
-      </section>
-    </main>
+      </div>
+      {errorMessage && (
+        <div style={{background:'#fef2f2',border:'1px solid #fca5a5',borderRadius:'12px',padding:'16px',color:'#991b1b',fontSize:'14px'}}>
+          {errorMessage}
+        </div>
+      )}
+      {vehicle && (
+        <div style={{display:'flex',flexDirection:'column',gap:'16px'}}>
+          <VehicleHeader vehicle={vehicle} />
+          <VehicleDataGrid vehicle={vehicle} />
+        </div>
+      )}
+    </div>
   );
 }
