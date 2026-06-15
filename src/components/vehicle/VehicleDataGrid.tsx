@@ -1,4 +1,5 @@
-﻿import type { VehicleData } from "@/types/vehicle";
+﻿"use client";
+import type { VehicleData } from "@/types/vehicle";
 import { formatPrice } from "@/lib/utils/formatters";
 import { AIAdvice } from "./AIAdvice";
 import { APKHistory } from "./APKHistory";
