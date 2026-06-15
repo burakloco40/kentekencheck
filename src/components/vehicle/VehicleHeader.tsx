@@ -1,8 +1,67 @@
 ﻿import type { VehicleData } from "@/types/vehicle";
+import Image from "next/image";
 
 interface Props { vehicle: VehicleData; }
 
+function getBrandLogo(brand: string): string | null {
+  const map: Record<string, string> = {
+    TOYOTA: "toyota",
+    VOLKSWAGEN: "volkswagen",
+    BMW: "bmw",
+    MERCEDES: "mercedes-benz",
+    AUDI: "audi",
+    FORD: "ford",
+    OPEL: "opel",
+    RENAULT: "renault",
+    PEUGEOT: "peugeot",
+    CITROEN: "citroen",
+    NISSAN: "nissan",
+    HONDA: "honda",
+    MAZDA: "mazda",
+    VOLVO: "volvo",
+    SKODA: "skoda",
+    SEAT: "seat",
+    HYUNDAI: "hyundai",
+    KIA: "kia",
+    FIAT: "fiat",
+    SUZUKI: "suzuki",
+    MITSUBISHI: "mitsubishi",
+    DACIA: "dacia",
+    MINI: "mini",
+    PORSCHE: "porsche",
+    TESLA: "tesla",
+    JEEP: "jeep",
+    DODGE: "dodge",
+    CHEVROLET: "chevrolet",
+    CHRYSLER: "chrysler",
+    LAND: "land-rover",
+    JAGUAR: "jaguar",
+    LEXUS: "lexus",
+    INFINITI: "infiniti",
+    ALFA: "alfa-romeo",
+    LANCIA: "lancia",
+    SAAB: "saab",
+    SUBARU: "subaru",
+    ISUZU: "isuzu",
+    SMART: "smart",
+    DS: "ds",
+    SSANGYONG: "ssangyong",
+    DAEWOO: "daewoo",
+    ROVER: "rover",
+  };
+
+  const upperBrand = brand.toUpperCase();
+  for (const [key, value] of Object.entries(map)) {
+    if (upperBrand.includes(key)) {
+      return `https://raw.githubusercontent.com/filippofilip95/car-logos-dataset/master/logos/optimized/${value}.png`;
+    }
+  }
+  return null;
+}
+
 export function VehicleHeader({ vehicle }: Props) {
+  const logoUrl = getBrandLogo(vehicle.brand);
+
   const apkBg = vehicle.apkStatus === "expired" ? "#fef2f2" : "#f0fdf4";
   const apkBorder = vehicle.apkStatus === "expired" ? "#fca5a5" : "#86efac";
   const apkText = vehicle.apkStatus === "expired" ? "#991b1b" : "#166534";
@@ -17,10 +76,25 @@ export function VehicleHeader({ vehicle }: Props) {
       <div style={{display:'flex',flexWrap:'wrap',justifyContent:'space-between',alignItems:'flex-start',gap:'20px'}}>
 
         <div style={{flex:1,minWidth:'240px'}}>
-          <p style={{fontSize:'11px',fontWeight:600,letterSpacing:'0.12em',textTransform:'uppercase',color:'rgba(255,255,255,0.45)',margin:'0 0 6px 0'}}>{vehicle.vehicleType}</p>
-          <h1 style={{fontSize:'32px',fontWeight:800,color:'white',margin:'0 0 4px 0',lineHeight:1.1}}>
-            {vehicle.brand} <span style={{color:'#F5C518'}}>{vehicle.model}</span>
-          </h1>
+          <div style={{display:'flex',alignItems:'center',gap:'16px',marginBottom:'12px'}}>
+            {logoUrl && (
+              <div style={{width:'56px',height:'56px',background:'white',borderRadius:'10px',display:'flex',alignItems:'center',justifyContent:'center',padding:'6px',flexShrink:0}}>
+                <img
+                  src={logoUrl}
+                  alt={vehicle.brand + " logo"}
+                  style={{width:'100%',height:'100%',objectFit:'contain'}}
+                  onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }}
+                />
+              </div>
+            )}
+            <div>
+              <p style={{fontSize:'11px',fontWeight:600,letterSpacing:'0.12em',textTransform:'uppercase',color:'rgba(255,255,255,0.45)',margin:'0 0 4px 0'}}>{vehicle.vehicleType}</p>
+              <h1 style={{fontSize:'28px',fontWeight:800,color:'white',margin:0,lineHeight:1.1}}>
+                {vehicle.brand} <span style={{color:'#F5C518'}}>{vehicle.model}</span>
+              </h1>
+            </div>
+          </div>
+
           {vehicle.bodyStyle && vehicle.bodyStyle !== "Onbekend" && (
             <p style={{fontSize:'14px',color:'rgba(255,255,255,0.45)',margin:'0 0 16px 0'}}>
               {vehicle.bodyStyle}{vehicle.firstAdmissionDateNL ? " · " + vehicle.firstAdmissionDateNL : ""}
