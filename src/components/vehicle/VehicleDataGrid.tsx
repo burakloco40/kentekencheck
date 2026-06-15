@@ -52,10 +52,6 @@ export function VehicleDataGrid({ vehicle }: Props) {
   return (
     <div style={{display:'flex',flexDirection:'column',gap:'12px'}}>
 
-      {vehicle.hasRecallAction && (
-        <RecallActions actions={vehicle.recallActions} />
-      )}
-
       <Section title="Voertuig" emoji="🚗">
         <Field label="Merk" value={vehicle.brand} highlight />
         <Field label="Model" value={vehicle.model} highlight />
@@ -106,6 +102,10 @@ export function VehicleDataGrid({ vehicle }: Props) {
       </Section>
 
       <APKHistory history={vehicle.apkHistory} apkExpiryDateNL={vehicle.apkExpiryDateNL} />
+
+      {vehicle.hasRecallAction && (
+        <RecallActions actions={vehicle.recallActions} />
+      )}
 
       <AIAdvice vehicle={vehicle} />
 
