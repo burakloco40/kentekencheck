@@ -1,4 +1,5 @@
 ﻿import type { VehicleData } from "@/types/vehicle";
+import Image from "next/image";
 
 interface Props { vehicle: VehicleData; }
 
@@ -32,13 +33,21 @@ function getBrandLogo(brand: string): string | null {
     JEEP: "jeep",
     DODGE: "dodge",
     CHEVROLET: "chevrolet",
+    CHRYSLER: "chrysler",
     LAND: "land-rover",
     JAGUAR: "jaguar",
     LEXUS: "lexus",
+    INFINITI: "infiniti",
     ALFA: "alfa-romeo",
-    SUBARU: "subaru",
-    SMART: "smart",
+    LANCIA: "lancia",
     SAAB: "saab",
+    SUBARU: "subaru",
+    ISUZU: "isuzu",
+    SMART: "smart",
+    DS: "ds",
+    SSANGYONG: "ssangyong",
+    DAEWOO: "daewoo",
+    ROVER: "rover",
   };
 
   const upperBrand = brand.toUpperCase();
@@ -69,18 +78,12 @@ export function VehicleHeader({ vehicle }: Props) {
         <div style={{flex:1,minWidth:'240px'}}>
           <div style={{display:'flex',alignItems:'center',gap:'16px',marginBottom:'12px'}}>
             {logoUrl && (
-              <div style={{width:'60px',height:'60px',background:'white',borderRadius:'12px',display:'flex',alignItems:'center',justifyContent:'center',padding:'8px',flexShrink:0,boxShadow:'0 2px 8px rgba(0,0,0,0.2)'}}>
-                {/* eslint-disable-next-line @next/next/no-img-element */}
+              <div style={{width:'56px',height:'56px',background:'white',borderRadius:'10px',display:'flex',alignItems:'center',justifyContent:'center',padding:'6px',flexShrink:0}}>
                 <img
                   src={logoUrl}
-                  alt={vehicle.brand}
-                  width={44}
-                  height={44}
-                  style={{width:'44px',height:'44px',objectFit:'contain'}}
-                  onError={(e) => {
-                    const target = e.target as HTMLImageElement;
-                    target.parentElement!.style.display = 'none';
-                  }}
+                  alt={vehicle.brand + " logo"}
+                  style={{width:'100%',height:'100%',objectFit:'contain'}}
+                  onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }}
                 />
               </div>
             )}
