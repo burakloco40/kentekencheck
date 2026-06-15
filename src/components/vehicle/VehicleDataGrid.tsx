@@ -62,21 +62,26 @@ export function VehicleDataGrid({ vehicle }: Props) {
         {vehicle.secondaryColor && <Field label="2e kleur" value={vehicle.secondaryColor} />}
         <Field label="Deuren" value={vehicle.numberOfDoors} />
         <Field label="Zitplaatsen" value={vehicle.numberOfSeats} />
+        <Field label="EU categorie" value={vehicle.europeanCategory} />
         <Field label="Eerste toelating" value={vehicle.firstAdmissionDateNL} />
         <Field label="Eerste NL registratie" value={vehicle.firstRegistrationNLDateNL} />
         <Field label="Laatste tenaamstelling" value={vehicle.lastRegistrationDateNL} />
         <Field label="Herkomst" value={vehicle.isImport ? "Import" : "Nederlands"} />
         {vehicle.isExported && <Field label="Export" value="Ja" />}
+        {vehicle.isTaxi && <Field label="Taxi" value="Ja" />}
       </Section>
 
       <Section title="Motor en Techniek" emoji="⚙️">
         <Field label="Brandstof" value={vehicle.fuelType} highlight />
-        <Field label="Vermogen pk" value={vehicle.powerHP} unit="pk" highlight />
+        <Field label="Vermogen" value={vehicle.powerHP} unit="pk" highlight />
         <Field label="Vermogen kW" value={vehicle.powerKW} unit="kW" />
         <Field label="Cilinderinhoud" value={vehicle.engineDisplacement} unit="cc" />
         <Field label="Aantal cilinders" value={vehicle.numberOfCylinders} />
+        <Field label="Motorcode" value={vehicle.engineCode} />
+        <Field label="Variant" value={vehicle.variant} />
         <Field label="CO2 uitstoot" value={vehicle.co2Emission} unit="g/km" />
         <Field label="Emissienorm" value={vehicle.emissionLevel} />
+        <Field label="Energielabel" value={vehicle.energyLabel} />
         <Field label="Geluidsniveau" value={vehicle.soundLevel} unit="dB" />
       </Section>
 
@@ -86,14 +91,18 @@ export function VehicleDataGrid({ vehicle }: Props) {
         <Field label="Snelweg" value={vehicle.fuelConsumptionHighway} unit="l/100km" />
       </Section>
 
-      <Section title="Gewicht" emoji="⚖️">
+      <Section title="Gewicht en Afmetingen" emoji="⚖️">
         <Field label="Leeg gewicht" value={vehicle.massEmpty} unit="kg" />
         <Field label="Rijklaar gewicht" value={vehicle.massRijklaar} unit="kg" />
         <Field label="Max. massa" value={vehicle.massMax} unit="kg" />
+        <Field label="Trekgewicht ongeremd" value={vehicle.towWeightUnbraked} unit="kg" />
+        <Field label="Trekgewicht geremd" value={vehicle.towWeightBraked} unit="kg" />
+        <Field label="Wielbasis" value={vehicle.wheelbase} unit="cm" />
       </Section>
 
       <Section title="Financieel" emoji="💶">
         <Field label="Catalogusprijs" value={vehicle.catalogPrice ? formatPrice(vehicle.catalogPrice) : null} highlight />
+        <Field label="Bruto BPM" value={vehicle.brutoBpm ? formatPrice(vehicle.brutoBpm) : null} />
       </Section>
 
       <Section title="APK en Verzekering" emoji="📋">

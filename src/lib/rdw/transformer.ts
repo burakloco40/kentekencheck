@@ -46,17 +46,14 @@ export function transformRDWData(
   }
   const rawPrice = vehicleBase.catalogusprijs;
   const catalogPrice = rawPrice && rawPrice !== "0" ? parseInt(rawPrice, 10) : null;
-
   const datumToelating = vehicleBase.datum_eerste_toelating ?? null;
   const datumNLRegistratie = vehicleBase.datum_eerste_tenaamstelling_in_nederland ?? null;
   const isImport = !!(datumToelating && datumNLRegistratie && datumToelating !== datumNLRegistratie);
-
   const fuelCombined = fuelData?.brandstofverbruik_gecombineerd ? parseFloat(fuelData.brandstofverbruik_gecombineerd) : null;
   const fuelCity = fuelData?.brandstofverbruik_stad ? parseFloat(fuelData.brandstofverbruik_stad) : null;
   const fuelHighway = fuelData?.brandstofverbruik_buiten_de_bebouwde_kom ? parseFloat(fuelData.brandstofverbruik_buiten_de_bebouwde_kom) : null;
   const soundLevel = fuelData?.geluidsniveau_rijdend ? parseInt(fuelData.geluidsniveau_rijdend, 10) : null;
 
-  // NAP status
   let napStatus: NapStatus = "unknown";
   const tellerstandoordeel = vehicleBase.tellerstandoordeel?.toLowerCase() ?? "";
   if (tellerstandoordeel === "logisch") napStatus = "logisch";
@@ -111,7 +108,17 @@ export function transformRDWData(
     massEmpty: vehicleBase.massa_ledig_voertuig ? parseInt(vehicleBase.massa_ledig_voertuig, 10) : null,
     massRijklaar: vehicleBase.massa_rijklaar ? parseInt(vehicleBase.massa_rijklaar, 10) : null,
     massMax: vehicleBase.toegestane_maximum_massa_voertuig ? parseInt(vehicleBase.toegestane_maximum_massa_voertuig, 10) : null,
+    towWeightUnbraked: vehicleBase.maximum_massa_trekken_ongeremd ? parseInt(vehicleBase.maximum_massa_trekken_ongeremd, 10) : null,
+    towWeightBraked: vehicleBase.maximum_trekken_massa_geremd ? parseInt(vehicleBase.maximum_trekken_massa_geremd, 10) : null,
     catalogPrice,
+    brutoBpm: vehicleBase.bruto_bpm ? parseInt(vehicleBase.bruto_bpm, 10) : null,
+    wheelbase: vehicleBase.wielbasis ? parseInt(vehicleBase.wielbasis, 10) : null,
+    energyLabel: vehicleBase.zuinigheidsclassificatie ?? null,
+    engineCode: vehicleBase.type ?? null,
+    variant: vehicleBase.variant ?? null,
+    typeApproval: vehicleBase.typegoedkeuringsnummer ?? null,
+    europeanCategory: vehicleBase.europese_voertuigcategorie ?? null,
+    isTaxi: vehicleBase.taxi_indicator === "Ja",
     firstAdmissionDate: formatDateISO(vehicleBase.datum_eerste_toelating),
     firstAdmissionDateNL: formatDateNL(vehicleBase.datum_eerste_toelating),
     firstRegistrationNLDateNL: formatDateNL(vehicleBase.datum_eerste_tenaamstelling_in_nederland),

@@ -42,7 +42,17 @@ export interface VehicleData {
   massEmpty: number | null;
   massRijklaar: number | null;
   massMax: number | null;
+  towWeightUnbraked: number | null;
+  towWeightBraked: number | null;
   catalogPrice: number | null;
+  brutoBpm: number | null;
+  wheelbase: number | null;
+  energyLabel: string | null;
+  engineCode: string | null;
+  variant: string | null;
+  typeApproval: string | null;
+  europeanCategory: string | null;
+  isTaxi: boolean;
   firstAdmissionDate: string | null;
   firstAdmissionDateNL: string | null;
   firstRegistrationNLDateNL: string | null;

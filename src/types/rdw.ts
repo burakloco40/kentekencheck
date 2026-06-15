@@ -27,6 +27,17 @@
   export_indicator?: string;
   tellerstandoordeel?: string;
   jaar_laatste_registratie_tellerstand?: string;
+  type?: string;
+  variant?: string;
+  uitvoering?: string;
+  typegoedkeuringsnummer?: string;
+  wielbasis?: string;
+  bruto_bpm?: string;
+  zuinigheidsclassificatie?: string;
+  maximum_massa_trekken_ongeremd?: string;
+  maximum_trekken_massa_geremd?: string;
+  europese_voertuigcategorie?: string;
+  taxi_indicator?: string;
 }
 
 export interface RDWApkRaw {
