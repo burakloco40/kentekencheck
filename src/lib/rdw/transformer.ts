@@ -1,5 +1,5 @@
 import type { RDWVehicleRaw, RDWApkRaw, RDWFuelRaw, RDWKeuringRaw, RDWGebrekRaw, RDWTerugroepRaw } from "@/types/rdw";
-import type { VehicleData, APKStatus, InsuranceStatus, APKKeuring, Terugroepactie } from "@/types/vehicle";
+import type { VehicleData, APKStatus, InsuranceStatus, NapStatus, APKKeuring, Terugroepactie } from "@/types/vehicle";
 import { formatDateNL, formatDateISO, daysFromToday, formatFuelType, formatVehicleType, formatColor, formatBodyStyle, kwToHp } from "@/lib/utils/formatters";
 import { formatPlateDisplay } from "@/lib/validation/plate";
 
@@ -51,18 +51,17 @@ export function transformRDWData(
   const datumNLRegistratie = vehicleBase.datum_eerste_tenaamstelling_in_nederland ?? null;
   const isImport = !!(datumToelating && datumNLRegistratie && datumToelating !== datumNLRegistratie);
 
-  const fuelCombined = fuelData?.brandstofverbruik_gecombineerd
-    ? parseFloat(fuelData.brandstofverbruik_gecombineerd)
-    : null;
-  const fuelCity = fuelData?.brandstofverbruik_stad
-    ? parseFloat(fuelData.brandstofverbruik_stad)
-    : null;
-  const fuelHighway = fuelData?.brandstofverbruik_buiten_de_bebouwde_kom
-    ? parseFloat(fuelData.brandstofverbruik_buiten_de_bebouwde_kom)
-    : null;
-  const soundLevel = fuelData?.geluidsniveau_rijdend
-    ? parseInt(fuelData.geluidsniveau_rijdend, 10)
-    : null;
+  const fuelCombined = fuelData?.brandstofverbruik_gecombineerd ? parseFloat(fuelData.brandstofverbruik_gecombineerd) : null;
+  const fuelCity = fuelData?.brandstofverbruik_stad ? parseFloat(fuelData.brandstofverbruik_stad) : null;
+  const fuelHighway = fuelData?.brandstofverbruik_buiten_de_bebouwde_kom ? parseFloat(fuelData.brandstofverbruik_buiten_de_bebouwde_kom) : null;
+  const soundLevel = fuelData?.geluidsniveau_rijdend ? parseInt(fuelData.geluidsniveau_rijdend, 10) : null;
+
+  // NAP status
+  let napStatus: NapStatus = "unknown";
+  const tellerstandoordeel = vehicleBase.tellerstandoordeel?.toLowerCase() ?? "";
+  if (tellerstandoordeel === "logisch") napStatus = "logisch";
+  else if (tellerstandoordeel === "onlogisch") napStatus = "onlogisch";
+  else if (tellerstandoordeel.includes("niet geregistreerd") || tellerstandoordeel === "geen oordeel") napStatus = "niet_geregistreerd";
 
   const apkHistory: APKKeuring[] = keuringen.map(k => {
     const datum = k.meld_datum_door_keuringsinstantie ?? "";
@@ -118,6 +117,8 @@ export function transformRDWData(
     firstRegistrationNLDateNL: formatDateNL(vehicleBase.datum_eerste_tenaamstelling_in_nederland),
     lastRegistrationDateNL: formatDateNL(vehicleBase.datum_tenaamstelling),
     isImport,
+    napStatus,
+    napJaar: vehicleBase.jaar_laatste_registratie_tellerstand ?? null,
     apkExpiryDate: apkISO,
     apkExpiryDateNL: formatDateNL(apkRaw),
     apkStatus,

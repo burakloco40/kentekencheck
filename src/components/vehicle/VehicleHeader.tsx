@@ -110,8 +110,11 @@ export function VehicleHeader({ vehicle }: Props) {
             {vehicle.hasRecallAction && (
               <span style={{fontSize:'12px',fontWeight:700,padding:'5px 12px',borderRadius:'20px',border:'2px solid #fca5a5',background:'#fef2f2',color:'#991b1b'}}>⚠ Terugroepactie</span>
             )}
-            {vehicle.isExported && (
-              <span style={{fontSize:'12px',fontWeight:700,padding:'5px 12px',borderRadius:'20px',border:'2px solid #e5e7eb',background:'#f9fafb',color:'#6b7280'}}>📦 Geëxporteerd</span>
+{vehicle.napStatus === "logisch" && (
+              <span style={{fontSize:'12px',fontWeight:700,padding:'5px 12px',borderRadius:'20px',border:'2px solid #86efac',background:'#f0fdf4',color:'#166534'}}>✓ NAP</span>
+            )}
+            {vehicle.napStatus === "onlogisch" && (
+              <span style={{fontSize:'12px',fontWeight:700,padding:'5px 12px',borderRadius:'20px',border:'2px solid #fca5a5',background:'#fef2f2',color:'#991b1b'}}>✕ Kilometerstand onlogisch</span>
             )}
           </div>
 

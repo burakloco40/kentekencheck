@@ -25,6 +25,8 @@
   vermogen_massarijklaar?: string;
   openstaande_terugroepactie_indicator?: string;
   export_indicator?: string;
+  tellerstandoordeel?: string;
+  jaar_laatste_registratie_tellerstand?: string;
 }
 
 export interface RDWApkRaw {

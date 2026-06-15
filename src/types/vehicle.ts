@@ -1,5 +1,6 @@
 ﻿export type APKStatus = "valid" | "expired" | "unknown";
 export type InsuranceStatus = "insured" | "not_insured" | "unknown";
+export type NapStatus = "logisch" | "onlogisch" | "niet_geregistreerd" | "unknown";
 export type ErrorCode = "INVALID_PLATE" | "NOT_FOUND" | "RATE_LIMITED" | "UPSTREAM_ERROR" | "INTERNAL_ERROR";
 
 export interface Terugroepactie {
@@ -47,6 +48,8 @@ export interface VehicleData {
   firstRegistrationNLDateNL: string | null;
   lastRegistrationDateNL: string | null;
   isImport: boolean;
+  napStatus: NapStatus;
+  napJaar: string | null;
   apkExpiryDate: string | null;
   apkExpiryDateNL: string | null;
   apkStatus: APKStatus;
