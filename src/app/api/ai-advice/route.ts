@@ -4,33 +4,37 @@ import type { VehicleData } from "@/types/vehicle";
 export async function POST(req: NextRequest) {
   const { vehicle }: { vehicle: VehicleData } = await req.json();
 
-  const prompt = `Je bent een Nederlandse auto-expert met toegang tot technische specificaties. Geef advies over dit voertuig:
+  const prompt = `Je bent een Nederlandse auto-expert met diepgaande kennis van autoforums, Reddit (r/cars, r/mechanicadvice), Tweakers autoforum, Autoweek en andere autosites.
 
-Merk/Model: ${vehicle.brand} ${vehicle.model}
-Bouwjaar: ${vehicle.firstAdmissionDateNL ?? "onbekend"}
-Brandstof: ${vehicle.fuelType}
-Vermogen: ${vehicle.powerHP ? vehicle.powerHP + " pk / " + vehicle.powerKW + " kW" : "onbekend"}
-Cilinderinhoud: ${vehicle.engineDisplacement ? vehicle.engineDisplacement + " cc" : "onbekend"}
-Leeg gewicht: ${vehicle.massEmpty ? vehicle.massEmpty + " kg" : "onbekend"}
-APK: ${vehicle.apkStatus === "valid" ? "Geldig" : vehicle.apkStatus === "expired" ? "Verlopen" : "Onbekend"}
-Catalogusprijs: ${vehicle.catalogPrice ? "€" + vehicle.catalogPrice : "onbekend"}
+Analyseer dit specifieke voertuig:
+- Merk/Model: ${vehicle.brand} ${vehicle.model}
+- Bouwjaar: ${vehicle.firstAdmissionDateNL ?? "onbekend"}
+- Motor: ${vehicle.engineDisplacement ? vehicle.engineDisplacement + "cc" : ""} ${vehicle.fuelType} ${vehicle.powerHP ? vehicle.powerHP + "pk" : ""}
+- Cilinderinhoud: ${vehicle.engineDisplacement ?? "onbekend"}cc
+- Emissienorm: ${vehicle.emissionLevel ?? "onbekend"}
+- Kilometerstand: onbekend
+- Herkomst: ${vehicle.isImport ? "Import" : "Nederlands"}
 
-Geef het volgende terug in dit exacte formaat:
+Geef een gedetailleerde analyse op basis van wat bekend is van forums en eigenaarservaringen:
 
-KOPPELMOMENT: [maximaal koppelmoment in Nm op basis van jouw kennis van dit model, of "onbekend"]
+KOPPELMOMENT: [exacte Nm waarde voor deze specifieke motorvariant]
 
-BETROUWBAARHEID: [beoordeling 1-10 met korte uitleg]
+BEKENDE PROBLEMEN:
+- [Specifiek technisch probleem 1 dat bekend is van forums voor dit model/motor, met component naam]
+- [Specifiek technisch probleem 2]
+- [Specifiek technisch probleem 3]
 
-AANDACHTSPUNTEN:
-- [punt 1]
-- [punt 2]
-- [punt 3]
+BETROUWBAARHEIDSSCORE: [cijfer 1-10] — [korte uitleg waarom]
 
-AANKOOPADVIES: [2-3 zinnen direct advies]
+AANKOOPADVIES: [2-3 zinnen praktisch advies specifiek voor dit model en bouwjaar]
 
-ONDERHOUD: [2-3 zinnen onderhoudsadvies]
+WAAR OP LETTEN BIJ AANKOOP:
+- [Specifiek controlepunt 1]
+- [Specifiek controlepunt 2]
 
-Schrijf in het Nederlands. Wees direct en praktisch.`;
+ONDERHOUDSADVIES: [Specifieke onderhoudspunten voor dit model]
+
+Schrijf in het Nederlands. Wees specifiek en noem echte technische componenten. Geen vage algemene uitspraken.`;
 
   try {
     const response = await fetch("https://api.groq.com/openai/v1/chat/completions", {
@@ -42,7 +46,7 @@ Schrijf in het Nederlands. Wees direct en praktisch.`;
       body: JSON.stringify({
         model: "llama-3.3-70b-versatile",
         messages: [{ role: "user", content: prompt }],
-        max_tokens: 600,
+        max_tokens: 800,
       }),
     });
 
