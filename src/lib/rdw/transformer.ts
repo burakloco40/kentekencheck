@@ -90,7 +90,7 @@ export function transformRDWData(
     plate: formatPlateDisplay(plate),
     plateRaw: plate.toUpperCase(),
     brand: vehicleBase.merk?.toUpperCase() ?? "Onbekend",
-    model: (vehicleBase.handelsbenaming?.toUpperCase() ?? "Onbekend").replace(vehicleBase.merk?.toUpperCase() ?? "", "").trim(),
+    model: vehicleBase.handelsbenaming?.toUpperCase() ?? "Onbekend",
     vehicleType: formatVehicleType(vehicleBase.voertuigsoort),
     bodyStyle: formatBodyStyle(vehicleBase.inrichting),
     primaryColor: formatColor(vehicleBase.eerste_kleur),
