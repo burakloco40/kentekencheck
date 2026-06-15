@@ -1,5 +1,6 @@
-﻿import type { VehicleData } from "@/types/vehicle";
-import Image from "next/image";
+﻿"use client";
+import type { VehicleData } from "@/types/vehicle";
+import { useState } from "react";
 
 interface Props { vehicle: VehicleData; }
 
@@ -33,23 +34,14 @@ function getBrandLogo(brand: string): string | null {
     JEEP: "jeep",
     DODGE: "dodge",
     CHEVROLET: "chevrolet",
-    CHRYSLER: "chrysler",
     LAND: "land-rover",
     JAGUAR: "jaguar",
     LEXUS: "lexus",
-    INFINITI: "infiniti",
     ALFA: "alfa-romeo",
-    LANCIA: "lancia",
-    SAAB: "saab",
     SUBARU: "subaru",
-    ISUZU: "isuzu",
     SMART: "smart",
-    DS: "ds",
-    SSANGYONG: "ssangyong",
-    DAEWOO: "daewoo",
-    ROVER: "rover",
+    SAAB: "saab",
   };
-
   const upperBrand = brand.toUpperCase();
   for (const [key, value] of Object.entries(map)) {
     if (upperBrand.includes(key)) {
@@ -59,9 +51,23 @@ function getBrandLogo(brand: string): string | null {
   return null;
 }
 
-export function VehicleHeader({ vehicle }: Props) {
-  const logoUrl = getBrandLogo(vehicle.brand);
+function BrandLogo({ brand }: { brand: string }) {
+  const [visible, setVisible] = useState(true);
+  const logoUrl = getBrandLogo(brand);
+  if (!logoUrl || !visible) return null;
+  return (
+    <div style={{width:'60px',height:'60px',background:'white',borderRadius:'12px',display:'flex',alignItems:'center',justifyContent:'center',padding:'8px',flexShrink:0,boxShadow:'0 2px 8px rgba(0,0,0,0.2)'}}>
+      <img
+        src={logoUrl}
+        alt={brand}
+        style={{width:'44px',height:'44px',objectFit:'contain'}}
+        onError={() => setVisible(false)}
+      />
+    </div>
+  );
+}
 
+export function VehicleHeader({ vehicle }: Props) {
   const apkBg = vehicle.apkStatus === "expired" ? "#fef2f2" : "#f0fdf4";
   const apkBorder = vehicle.apkStatus === "expired" ? "#fca5a5" : "#86efac";
   const apkText = vehicle.apkStatus === "expired" ? "#991b1b" : "#166534";
@@ -77,16 +83,7 @@ export function VehicleHeader({ vehicle }: Props) {
 
         <div style={{flex:1,minWidth:'240px'}}>
           <div style={{display:'flex',alignItems:'center',gap:'16px',marginBottom:'12px'}}>
-            {logoUrl && (
-              <div style={{width:'56px',height:'56px',background:'white',borderRadius:'10px',display:'flex',alignItems:'center',justifyContent:'center',padding:'6px',flexShrink:0}}>
-                <img
-                  src={logoUrl}
-                  alt={vehicle.brand + " logo"}
-                  style={{width:'100%',height:'100%',objectFit:'contain'}}
-                  onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }}
-                />
-              </div>
-            )}
+            <BrandLogo brand={vehicle.brand} />
             <div>
               <p style={{fontSize:'11px',fontWeight:600,letterSpacing:'0.12em',textTransform:'uppercase',color:'rgba(255,255,255,0.45)',margin:'0 0 4px 0'}}>{vehicle.vehicleType}</p>
               <h1 style={{fontSize:'28px',fontWeight:800,color:'white',margin:0,lineHeight:1.1}}>
