@@ -6,45 +6,21 @@ interface Props { vehicle: VehicleData; }
 
 function getBrandLogo(brand: string): string | null {
   const map: Record<string, string> = {
-    TOYOTA: "toyota",
-    VOLKSWAGEN: "volkswagen",
-    BMW: "bmw",
-    MERCEDES: "mercedes-benz",
-    AUDI: "audi",
-    FORD: "ford",
-    OPEL: "opel",
-    RENAULT: "renault",
-    PEUGEOT: "peugeot",
-    CITROEN: "citroen",
-    NISSAN: "nissan",
-    HONDA: "honda",
-    MAZDA: "mazda",
-    VOLVO: "volvo",
-    SKODA: "skoda",
-    SEAT: "seat",
-    HYUNDAI: "hyundai",
-    KIA: "kia",
-    FIAT: "fiat",
-    SUZUKI: "suzuki",
-    MITSUBISHI: "mitsubishi",
-    DACIA: "dacia",
-    MINI: "mini",
-    PORSCHE: "porsche",
-    TESLA: "tesla",
-    JEEP: "jeep",
-    DODGE: "dodge",
-    CHEVROLET: "chevrolet",
-    LAND: "land-rover",
-    JAGUAR: "jaguar",
-    LEXUS: "lexus",
-    ALFA: "alfa-romeo",
-    SUBARU: "subaru",
-    SMART: "smart",
-    SAAB: "saab",
+    TOYOTA: "toyota", VOLKSWAGEN: "volkswagen", BMW: "bmw",
+    MERCEDES: "mercedes-benz", AUDI: "audi", FORD: "ford",
+    OPEL: "opel", RENAULT: "renault", PEUGEOT: "peugeot",
+    CITROEN: "citroen", NISSAN: "nissan", HONDA: "honda",
+    MAZDA: "mazda", VOLVO: "volvo", SKODA: "skoda",
+    SEAT: "seat", HYUNDAI: "hyundai", KIA: "kia",
+    FIAT: "fiat", SUZUKI: "suzuki", MITSUBISHI: "mitsubishi",
+    DACIA: "dacia", MINI: "mini", PORSCHE: "porsche",
+    TESLA: "tesla", JEEP: "jeep", DODGE: "dodge",
+    CHEVROLET: "chevrolet", LAND: "land-rover", JAGUAR: "jaguar",
+    LEXUS: "lexus", ALFA: "alfa-romeo", SUBARU: "subaru",
+    SMART: "smart", SAAB: "saab",
   };
-  const upperBrand = brand.toUpperCase();
   for (const [key, value] of Object.entries(map)) {
-    if (upperBrand.includes(key)) {
+    if (brand.toUpperCase().includes(key)) {
       return `https://raw.githubusercontent.com/filippofilip95/car-logos-dataset/master/logos/optimized/${value}.png`;
     }
   }
@@ -52,17 +28,12 @@ function getBrandLogo(brand: string): string | null {
 }
 
 function BrandLogo({ brand }: { brand: string }) {
-  const [visible, setVisible] = useState(true);
-  const logoUrl = getBrandLogo(brand);
-  if (!logoUrl || !visible) return null;
+  const [show, setShow] = useState(true);
+  const url = getBrandLogo(brand);
+  if (!url || !show) return null;
   return (
-    <div style={{width:'60px',height:'60px',background:'white',borderRadius:'12px',display:'flex',alignItems:'center',justifyContent:'center',padding:'8px',flexShrink:0,boxShadow:'0 2px 8px rgba(0,0,0,0.2)'}}>
-      <img
-        src={logoUrl}
-        alt={brand}
-        style={{width:'44px',height:'44px',objectFit:'contain'}}
-        onError={() => setVisible(false)}
-      />
+    <div style={{width:'56px',height:'56px',background:'white',borderRadius:'10px',padding:'6px',flexShrink:0,boxShadow:'0 2px 8px rgba(0,0,0,0.2)',display:'flex',alignItems:'center',justifyContent:'center'}}>
+      <img src={url} alt={brand} style={{width:'44px',height:'44px',objectFit:'contain'}} onError={() => setShow(false)} />
     </div>
   );
 }
@@ -80,7 +51,6 @@ export function VehicleHeader({ vehicle }: Props) {
   return (
     <div style={{background:'#0f2040',borderRadius:'16px',padding:'24px 28px',color:'white'}}>
       <div style={{display:'flex',flexWrap:'wrap',justifyContent:'space-between',alignItems:'flex-start',gap:'20px'}}>
-
         <div style={{flex:1,minWidth:'240px'}}>
           <div style={{display:'flex',alignItems:'center',gap:'16px',marginBottom:'12px'}}>
             <BrandLogo brand={vehicle.brand} />
@@ -91,16 +61,20 @@ export function VehicleHeader({ vehicle }: Props) {
               </h1>
             </div>
           </div>
-
           {vehicle.bodyStyle && vehicle.bodyStyle !== "Onbekend" && (
             <p style={{fontSize:'14px',color:'rgba(255,255,255,0.45)',margin:'0 0 16px 0'}}>
               {vehicle.bodyStyle}{vehicle.firstAdmissionDateNL ? " · " + vehicle.firstAdmissionDateNL : ""}
             </p>
           )}
-
           <div style={{display:'flex',flexWrap:'wrap',gap:'8px',marginBottom:'20px'}}>
             <span style={{fontSize:'12px',fontWeight:700,padding:'5px 12px',borderRadius:'20px',border:'2px solid '+apkBorder,background:apkBg,color:apkText}}>{apkLabel}</span>
             <span style={{fontSize:'12px',fontWeight:700,padding:'5px 12px',borderRadius:'20px',border:'2px solid '+insBorder,background:insBg,color:insText}}>{insLabel}</span>
+            {vehicle.napStatus === "logisch" && (
+              <span style={{fontSize:'12px',fontWeight:700,padding:'5px 12px',borderRadius:'20px',border:'2px solid #86efac',background:'#f0fdf4',color:'#166534'}}>✓ NAP</span>
+            )}
+            {vehicle.napStatus === "onlogisch" && (
+              <span style={{fontSize:'12px',fontWeight:700,padding:'5px 12px',borderRadius:'20px',border:'2px solid #fca5a5',background:'#fef2f2',color:'#991b1b'}}>✕ Kilometerstand onlogisch</span>
+            )}
             {vehicle.isImport && (
               <span style={{fontSize:'12px',fontWeight:700,padding:'5px 12px',borderRadius:'20px',border:'2px solid #fed7aa',background:'#fff7ed',color:'#9a3412'}}>🌍 Import</span>
             )}
@@ -110,14 +84,10 @@ export function VehicleHeader({ vehicle }: Props) {
             {vehicle.hasRecallAction && (
               <span style={{fontSize:'12px',fontWeight:700,padding:'5px 12px',borderRadius:'20px',border:'2px solid #fca5a5',background:'#fef2f2',color:'#991b1b'}}>⚠ Terugroepactie</span>
             )}
-{vehicle.napStatus === "logisch" && (
-              <span style={{fontSize:'12px',fontWeight:700,padding:'5px 12px',borderRadius:'20px',border:'2px solid #86efac',background:'#f0fdf4',color:'#166534'}}>✓ NAP</span>
-            )}
-            {vehicle.napStatus === "onlogisch" && (
-              <span style={{fontSize:'12px',fontWeight:700,padding:'5px 12px',borderRadius:'20px',border:'2px solid #fca5a5',background:'#fef2f2',color:'#991b1b'}}>✕ Kilometerstand onlogisch</span>
+            {vehicle.isExported && (
+              <span style={{fontSize:'12px',fontWeight:700,padding:'5px 12px',borderRadius:'20px',border:'2px solid #e5e7eb',background:'#f9fafb',color:'#6b7280'}}>📦 Geëxporteerd</span>
             )}
           </div>
-
           <div style={{display:'flex',flexWrap:'wrap',gap:'24px'}}>
             {vehicle.powerHP && (
               <div>
@@ -139,7 +109,6 @@ export function VehicleHeader({ vehicle }: Props) {
             )}
           </div>
         </div>
-
         <div style={{flexShrink:0,display:'flex',flexDirection:'column',alignItems:'center',gap:'12px'}}>
           <div style={{display:'inline-flex',borderRadius:'6px',border:'2px solid rgba(212,160,23,0.4)',overflow:'hidden',boxShadow:'0 4px 12px rgba(0,0,0,0.3)'}}>
             <div style={{background:'#162d58',width:'36px',display:'flex',flexDirection:'column',alignItems:'center',justifyContent:'center',gap:'4px',padding:'4px'}}>
@@ -154,7 +123,6 @@ export function VehicleHeader({ vehicle }: Props) {
               <span style={{fontFamily:'Courier Prime, monospace',fontSize:'24px',fontWeight:700,color:'#0f2040',letterSpacing:'0.15em'}}>{vehicle.plate}</span>
             </div>
           </div>
-
           {vehicle.lastRegistrationDateNL && (
             <div style={{background:'rgba(255,255,255,0.08)',border:'1px solid rgba(255,255,255,0.15)',borderRadius:'10px',padding:'10px 16px',textAlign:'center'}}>
               <p style={{fontSize:'11px',color:'rgba(255,255,255,0.45)',margin:'0 0 4px',textTransform:'uppercase',letterSpacing:'0.08em',fontWeight:600}}>Laatste tenaamstelling</p>
@@ -162,7 +130,6 @@ export function VehicleHeader({ vehicle }: Props) {
             </div>
           )}
         </div>
-
       </div>
     </div>
   );
