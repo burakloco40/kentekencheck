@@ -17,7 +17,7 @@ type VehicleResult = VehicleSuccess | VehicleError;
 
 async function getData(plate: string): Promise<VehicleResult> {
   const base = process.env.VERCEL_URL
-    ? "https://kentekencheck.vercel.app"
+    ? "https://kentekencheck-eight.vercel.app"
     : "http://localhost:3000";
   const res = await fetch(`${base}/api/vehicle/${plate}`, { cache: "no-store" });
   return res.json() as Promise<VehicleResult>;
