@@ -5,6 +5,7 @@ import { isValidPlate, normalizePlate, formatPlateDisplay } from "@/lib/validati
 import { VehicleHeader } from "@/components/vehicle/VehicleHeader";
 import { VehicleDataGrid } from "@/components/vehicle/VehicleDataGrid";
 import { LicensePlateInput } from "@/components/search/LicensePlateInput";
+import { ShareButtons } from "@/components/vehicle/ShareButtons";
 import type { VehicleData, ErrorCode } from "@/types/vehicle";
 
 interface PageProps {
@@ -17,7 +18,7 @@ type VehicleResult = VehicleSuccess | VehicleError;
 
 async function getData(plate: string): Promise<VehicleResult> {
   const base = process.env.VERCEL_URL
-? "https://kentekenrdwcheck.nl"
+    ? "https://kentekenrdwcheck.nl"
     : "http://localhost:3000";
   const res = await fetch(`${base}/api/vehicle/${plate}`, { cache: "no-store" });
   return res.json() as Promise<VehicleResult>;
@@ -44,14 +45,19 @@ export default async function Page({ params }: PageProps) {
   return (
     <div style={{maxWidth:'1000px',margin:'0 auto',padding:'24px 16px 40px'}}>
       <div style={{marginBottom:'24px'}}>
-        <div style={{display:'flex',alignItems:'center',gap:'12px',flexWrap:'wrap'}}>
-          <Link href="/" style={{display:'flex',alignItems:'center',gap:'6px',fontSize:'14px',color:'#6b7280',textDecoration:'none',flexShrink:0}}>
-            <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-              <path strokeLinecap="round" strokeLinejoin="round" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18" />
-            </svg>
-            Terug
-          </Link>
-          <LicensePlateInput initialValue={formatPlateDisplay(normalized)} size="compact" />
+        <div style={{display:'flex',alignItems:'center',justifyContent:'space-between',flexWrap:'wrap',gap:'12px'}}>
+          <div style={{display:'flex',alignItems:'center',gap:'12px',flexWrap:'wrap'}}>
+            <Link href="/" style={{display:'flex',alignItems:'center',gap:'6px',fontSize:'14px',color:'#6b7280',textDecoration:'none',flexShrink:0}}>
+              <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18" />
+              </svg>
+              Terug
+            </Link>
+            <LicensePlateInput initialValue={formatPlateDisplay(normalized)} size="compact" />
+          </div>
+          {vehicle && (
+            <ShareButtons plate={vehicle.plate} brand={vehicle.brand} model={vehicle.model} />
+          )}
         </div>
       </div>
       {errorMessage && (
