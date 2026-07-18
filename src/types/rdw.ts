@@ -52,9 +52,12 @@ export interface RDWApkRaw {
 
 export interface RDWFuelRaw {
   kenteken?: string;
+  brandstof_volgnummer?: string;
   brandstof_omschrijving?: string;
   cilinderinhoud?: string;
   nettomaximumvermogen?: string;
+  nominaal_continu_maximumvermogen?: string;
+  netto_max_vermogen_elektrisch?: string;
   co2_uitstoot_gecombineerd?: string;
   brandstofverbruik_gecombineerd?: string;
   brandstofverbruik_stad?: string;
@@ -62,6 +65,7 @@ export interface RDWFuelRaw {
   uitlaatemissieniveau?: string;
   emissiecode_omschrijving?: string;
   geluidsniveau_rijdend?: string;
+  klasse_hybride_elektrisch_voertuig?: string;
 }
 
 export interface RDWKeuringRaw {

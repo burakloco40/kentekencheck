@@ -1,6 +1,6 @@
 import type { RDWVehicleRaw, RDWApkRaw, RDWFuelRaw, RDWKeuringRaw, RDWGebrekRaw, RDWTerugroepRaw } from "@/types/rdw";
 import type { VehicleData, APKStatus, InsuranceStatus, NapStatus, APKKeuring, Terugroepactie } from "@/types/vehicle";
-import { formatDateNL, formatDateISO, daysFromToday, formatFuelType, formatVehicleType, formatColor, formatBodyStyle, kwToHp } from "@/lib/utils/formatters";
+import { formatDateNL, formatDateISO, daysFromToday, formatVehicleType, formatColor, formatBodyStyle, kwToHp } from "@/lib/utils/formatters";
 import { formatPlateDisplay } from "@/lib/validation/plate";
 
 function formatTijd(tijd: string | undefined): string {
@@ -18,20 +18,51 @@ function formatDatumNLFromYYYYMMDD(d: string | undefined): string {
   return `${day} ${monthNames[month]} ${year}`;
 }
 
+function determineFuelType(fuelRecords: RDWFuelRaw[]): string {
+  if (fuelRecords.length === 0) return "Onbekend";
+
+  const types = fuelRecords.map(r => r.brandstof_omschrijving?.toLowerCase() ?? "");
+  const hybridClass = fuelRecords.find(r => r.klasse_hybride_elektrisch_voertuig)?.klasse_hybride_elektrisch_voertuig?.toUpperCase() ?? "";
+
+  const hasBenzine = types.some(t => t.includes("benzine"));
+  const hasDiesel = types.some(t => t.includes("diesel"));
+  const hasElektrisch = types.some(t => t.includes("elektriciteit") || t.includes("elektrisch"));
+  const hasWaterstof = types.some(t => t.includes("waterstof"));
+
+  if (hasWaterstof) return "Waterstof";
+
+  if (hasElektrisch && (hasBenzine || hasDiesel)) {
+    if (hybridClass.includes("OVC-HEV") || hybridClass.includes("OVC-FCHEV")) {
+      return hasDiesel ? "Diesel / Plug-in Hybride (PHEV)" : "Benzine / Plug-in Hybride (PHEV)";
+    }
+    if (hybridClass.includes("NOVC-HEV")) {
+      return hasDiesel ? "Diesel / Mild Hybride (MHEV)" : "Benzine / Mild Hybride (MHEV)";
+    }
+    return hasDiesel ? "Diesel / Elektrisch (Hybride)" : "Benzine / Elektrisch (Hybride)";
+  }
+
+  if (hasElektrisch) return "Volledig Elektrisch";
+  if (hasDiesel) return "Diesel";
+  if (hasBenzine) return "Benzine";
+
+  return fuelRecords[0].brandstof_omschrijving ?? "Onbekend";
+}
+
 export function transformRDWData(
   plate: string,
   vehicleBase: RDWVehicleRaw,
   apkData: RDWApkRaw | null,
-  fuelData: RDWFuelRaw | null,
+  fuelData: RDWFuelRaw[],
   keuringen: RDWKeuringRaw[] = [],
   gebreken: RDWGebrekRaw[] = [],
   gebrekOmschrijvingen: Map<string, string> = new Map(),
   terugroepacties: RDWTerugroepRaw[] = []
 ): VehicleData {
-  const fuelType = fuelData?.brandstof_omschrijving ?? vehicleBase.brandstof_omschrijving ?? null;
-  const rawDisplacement = fuelData?.cilinderinhoud ?? vehicleBase.cilinderinhoud ?? null;
-  const rawPowerKW = fuelData?.nettomaximumvermogen ?? vehicleBase.nettomaximumvermogen ?? null;
-  const rawCO2 = fuelData?.co2_uitstoot_gecombineerd ?? vehicleBase.co2_uitstoot_gecombineerd ?? null;
+  const primaryFuel = fuelData[0] ?? null;
+  const fuelType = determineFuelType(fuelData);
+  const rawDisplacement = primaryFuel?.cilinderinhoud ?? vehicleBase.cilinderinhoud ?? null;
+  const rawPowerKW = primaryFuel?.nettomaximumvermogen ?? vehicleBase.nettomaximumvermogen ?? null;
+  const rawCO2 = primaryFuel?.co2_uitstoot_gecombineerd ?? vehicleBase.co2_uitstoot_gecombineerd ?? null;
   const powerKW = rawPowerKW ? Math.round(parseFloat(rawPowerKW)) : null;
   const apkRaw = vehicleBase.vervaldatum_apk ?? apkData?.vervaldatum_apk ?? null;
   const apkISO = formatDateISO(apkRaw);
@@ -49,10 +80,10 @@ export function transformRDWData(
   const datumToelating = vehicleBase.datum_eerste_toelating ?? null;
   const datumNLRegistratie = vehicleBase.datum_eerste_tenaamstelling_in_nederland ?? null;
   const isImport = !!(datumToelating && datumNLRegistratie && datumToelating !== datumNLRegistratie);
-  const fuelCombined = fuelData?.brandstofverbruik_gecombineerd ? parseFloat(fuelData.brandstofverbruik_gecombineerd) : null;
-  const fuelCity = fuelData?.brandstofverbruik_stad ? parseFloat(fuelData.brandstofverbruik_stad) : null;
-  const fuelHighway = fuelData?.brandstofverbruik_buiten_de_bebouwde_kom ? parseFloat(fuelData.brandstofverbruik_buiten_de_bebouwde_kom) : null;
-  const soundLevel = fuelData?.geluidsniveau_rijdend ? parseInt(fuelData.geluidsniveau_rijdend, 10) : null;
+  const fuelCombined = primaryFuel?.brandstofverbruik_gecombineerd ? parseFloat(primaryFuel.brandstofverbruik_gecombineerd) : null;
+  const fuelCity = primaryFuel?.brandstofverbruik_stad ? parseFloat(primaryFuel.brandstofverbruik_stad) : null;
+  const fuelHighway = primaryFuel?.brandstofverbruik_buiten_de_bebouwde_kom ? parseFloat(primaryFuel.brandstofverbruik_buiten_de_bebouwde_kom) : null;
+  const soundLevel = primaryFuel?.geluidsniveau_rijdend ? parseInt(primaryFuel.geluidsniveau_rijdend, 10) : null;
 
   let napStatus: NapStatus = "unknown";
   const tellerstandoordeel = vehicleBase.tellerstandoordeel?.toLowerCase() ?? "";
@@ -94,7 +125,7 @@ export function transformRDWData(
     numberOfDoors: vehicleBase.aantal_deuren ? parseInt(vehicleBase.aantal_deuren, 10) : null,
     numberOfSeats: vehicleBase.aantal_zitplaatsen ? parseInt(vehicleBase.aantal_zitplaatsen, 10) : null,
     numberOfCylinders: vehicleBase.aantal_cilinders ? parseInt(vehicleBase.aantal_cilinders, 10) : null,
-    fuelType: formatFuelType(fuelType),
+    fuelType,
     engineDisplacement: rawDisplacement ? parseInt(rawDisplacement, 10) : null,
     powerKW,
     powerHP: kwToHp(powerKW),
@@ -103,7 +134,7 @@ export function transformRDWData(
     fuelConsumptionCombined: fuelCombined,
     fuelConsumptionCity: fuelCity,
     fuelConsumptionHighway: fuelHighway,
-    emissionLevel: fuelData?.uitlaatemissieniveau ?? null,
+    emissionLevel: primaryFuel?.uitlaatemissieniveau ?? null,
     soundLevel,
     massEmpty: vehicleBase.massa_ledig_voertuig ? parseInt(vehicleBase.massa_ledig_voertuig, 10) : null,
     massRijklaar: vehicleBase.massa_rijklaar ? parseInt(vehicleBase.massa_rijklaar, 10) : null,

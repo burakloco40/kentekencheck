@@ -23,11 +23,11 @@ export async function fetchAPKData(plate: string): Promise<RDWApkRaw | null> {
   } catch { return null; }
 }
 
-export async function fetchFuelData(plate: string): Promise<RDWFuelRaw | null> {
+export async function fetchFuelData(plate: string): Promise<RDWFuelRaw[]> {
   try {
-    const results = await rdwFetch<RDWFuelRaw>(fuelUrl(plate));
-    return results.length > 0 ? results[0] : null;
-  } catch { return null; }
+    const url = `${RDW_BASE_URL}/${RDW_DATASETS.FUEL}.json?kenteken=${plate.toUpperCase()}&$limit=10&$order=brandstof_volgnummer`;
+    return await rdwFetch<RDWFuelRaw>(url);
+  } catch { return []; }
 }
 
 export async function fetchKeuringen(plate: string): Promise<RDWKeuringRaw[]> {
@@ -71,7 +71,7 @@ export async function fetchAllRDWData(plate: string) {
   return {
     vehicleBase: vehicleBase.status === "fulfilled" ? vehicleBase.value : null,
     apkData: apkData.status === "fulfilled" ? apkData.value : null,
-    fuelData: fuelData.status === "fulfilled" ? fuelData.value : null,
+    fuelData: fuelData.status === "fulfilled" ? fuelData.value : [] as RDWFuelRaw[],
     keuringen: keuringen.status === "fulfilled" ? keuringen.value : [],
     gebreken: gebreken.status === "fulfilled" ? gebreken.value : [],
     terugroepacties: terugroepacties.status === "fulfilled" ? terugroepacties.value : [],
