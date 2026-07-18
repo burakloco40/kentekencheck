@@ -20,17 +20,13 @@ function formatDatumNLFromYYYYMMDD(d: string | undefined): string {
 
 function determineFuelType(fuelRecords: RDWFuelRaw[]): string {
   if (fuelRecords.length === 0) return "Onbekend";
-
   const types = fuelRecords.map(r => r.brandstof_omschrijving?.toLowerCase() ?? "");
   const hybridClass = fuelRecords.find(r => r.klasse_hybride_elektrisch_voertuig)?.klasse_hybride_elektrisch_voertuig?.toUpperCase() ?? "";
-
   const hasBenzine = types.some(t => t.includes("benzine"));
   const hasDiesel = types.some(t => t.includes("diesel"));
   const hasElektrisch = types.some(t => t.includes("elektriciteit") || t.includes("elektrisch"));
   const hasWaterstof = types.some(t => t.includes("waterstof"));
-
   if (hasWaterstof) return "Waterstof";
-
   if (hasElektrisch && (hasBenzine || hasDiesel)) {
     if (hybridClass.includes("OVC-HEV") || hybridClass.includes("OVC-FCHEV")) {
       return hasDiesel ? "Diesel / Plug-in Hybride (PHEV)" : "Benzine / Plug-in Hybride (PHEV)";
@@ -40,12 +36,37 @@ function determineFuelType(fuelRecords: RDWFuelRaw[]): string {
     }
     return hasDiesel ? "Diesel / Elektrisch (Hybride)" : "Benzine / Elektrisch (Hybride)";
   }
-
   if (hasElektrisch) return "Volledig Elektrisch";
   if (hasDiesel) return "Diesel";
   if (hasBenzine) return "Benzine";
-
   return fuelRecords[0].brandstof_omschrijving ?? "Onbekend";
+}
+
+function determineParticulateFilter(fuelRecords: RDWFuelRaw[]): boolean | null {
+  const dieselRecord = fuelRecords.find(r => r.brandstof_omschrijving?.toLowerCase().includes("diesel"));
+  if (!dieselRecord) return null;
+  const emissionLevel = dieselRecord.uitlaatemissieniveau?.toUpperCase() ?? "";
+  const deeltjes = dieselRecord.uitstoot_deeltjes_licht ? parseFloat(dieselRecord.uitstoot_deeltjes_licht) : null;
+  if (emissionLevel.includes("EURO 5") || emissionLevel.includes("EURO 6")) return true;
+  if (deeltjes !== null && deeltjes <= 0.005) return true;
+  if (emissionLevel.includes("EURO 4") || emissionLevel.includes("EURO 3") || emissionLevel.includes("EURO 2") || emissionLevel.includes("EURO 1")) return false;
+  return null;
+}
+
+function determineMilieuzoneAccess(emissionLevel: string | null, fuelType: string): string | null {
+  if (!emissionLevel) return null;
+  const level = emissionLevel.toUpperCase();
+  const isDiesel = fuelType.toLowerCase().includes("diesel");
+  const isBenzine = fuelType.toLowerCase().includes("benzine");
+  const isElektrisch = fuelType.toLowerCase().includes("elektrisch") || fuelType.toLowerCase().includes("volledig elektrisch");
+  if (isElektrisch) return "Toegang overal (emissieloos)";
+  if (level.includes("EURO 6")) return isDiesel ? "Toegang overal (Euro 6 diesel)" : "Toegang overal";
+  if (level.includes("EURO 5")) return isDiesel ? "Toegang in de meeste zones (Euro 5 diesel)" : "Toegang overal";
+  if (level.includes("EURO 4")) return isDiesel ? "Mogelijk geen toegang in strenge milieuzones (Euro 4 diesel)" : "Toegang in de meeste zones";
+  if (level.includes("EURO 3") || level.includes("EURO 2") || level.includes("EURO 1")) {
+    return isDiesel || isBenzine ? "Geen toegang in milieuzones (Euro 3 of lager)" : null;
+  }
+  return null;
 }
 
 export function transformRDWData(
@@ -84,6 +105,9 @@ export function transformRDWData(
   const fuelCity = primaryFuel?.brandstofverbruik_stad ? parseFloat(primaryFuel.brandstofverbruik_stad) : null;
   const fuelHighway = primaryFuel?.brandstofverbruik_buiten_de_bebouwde_kom ? parseFloat(primaryFuel.brandstofverbruik_buiten_de_bebouwde_kom) : null;
   const soundLevel = primaryFuel?.geluidsniveau_rijdend ? parseInt(primaryFuel.geluidsniveau_rijdend, 10) : null;
+  const emissionLevel = primaryFuel?.uitlaatemissieniveau ?? null;
+  const hasParticulateFilter = determineParticulateFilter(fuelData);
+  const milieuzoneAccess = determineMilieuzoneAccess(emissionLevel, fuelType);
 
   let napStatus: NapStatus = "unknown";
   const tellerstandoordeel = vehicleBase.tellerstandoordeel?.toLowerCase() ?? "";
@@ -134,8 +158,10 @@ export function transformRDWData(
     fuelConsumptionCombined: fuelCombined,
     fuelConsumptionCity: fuelCity,
     fuelConsumptionHighway: fuelHighway,
-    emissionLevel: primaryFuel?.uitlaatemissieniveau ?? null,
+    emissionLevel,
     soundLevel,
+    hasParticulateFilter,
+    milieuzoneAccess,
     massEmpty: vehicleBase.massa_ledig_voertuig ? parseInt(vehicleBase.massa_ledig_voertuig, 10) : null,
     massRijklaar: vehicleBase.massa_rijklaar ? parseInt(vehicleBase.massa_rijklaar, 10) : null,
     massMax: vehicleBase.toegestane_maximum_massa_voertuig ? parseInt(vehicleBase.toegestane_maximum_massa_voertuig, 10) : null,

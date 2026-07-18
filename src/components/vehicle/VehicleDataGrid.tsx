@@ -91,7 +91,9 @@ export function VehicleDataGrid({ vehicle }: Props) {
         {label:'CO2 uitstoot', value: vehicle.co2Emission, unit: 'g/km'},
         {label:'Emissienorm', value: vehicle.emissionLevel},
         {label:'Energielabel', value: vehicle.energyLabel},
-        {label:'Geluidsniveau', value: vehicle.soundLevel, unit: 'dB'},
+       {label:'Geluidsniveau', value: vehicle.soundLevel, unit: 'dB'},
+        {label:'Roetfilter (DPF)', value: vehicle.hasParticulateFilter === null ? null : vehicle.hasParticulateFilter ? "Ja" : "Nee"},
+        {label:'Milieuzone toegang', value: vehicle.milieuzoneAccess},
       ]} />
 
       <Section title="Brandstofverbruik" emoji="⛽" rows={[

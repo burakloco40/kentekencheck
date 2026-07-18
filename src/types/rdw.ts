@@ -66,6 +66,7 @@ export interface RDWFuelRaw {
   emissiecode_omschrijving?: string;
   geluidsniveau_rijdend?: string;
   klasse_hybride_elektrisch_voertuig?: string;
+  uitstoot_deeltjes_licht?: string;
 }
 
 export interface RDWKeuringRaw {

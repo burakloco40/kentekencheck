@@ -39,6 +39,8 @@ export interface VehicleData {
   fuelConsumptionHighway: number | null;
   emissionLevel: string | null;
   soundLevel: number | null;
+  hasParticulateFilter: boolean | null;
+  milieuzoneAccess: string | null;
   massEmpty: number | null;
   massRijklaar: number | null;
   massMax: number | null;
