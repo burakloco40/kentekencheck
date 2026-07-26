@@ -62,22 +62,28 @@ export function VehicleDataGrid({ vehicle }: Props) {
         <RecallActions actions={vehicle.recallActions} />
       )}
 
+      {vehicle.isTaxi && (
+        <div style={{background:'#fff7ed',border:'2px solid #fed7aa',borderRadius:'12px',padding:'12px 16px',display:'flex',alignItems:'center',gap:'8px'}}>
+          <span style={{fontSize:'18px'}}>🚕</span>
+          <span style={{fontSize:'14px',fontWeight:700,color:'#9a3412'}}>Dit voertuig is geregistreerd als taxi of was in gebruik als taxi</span>
+        </div>
+      )}
+
       <Section title="Voertuig" emoji="🚗" rows={[
         {label:'Merk', value: vehicle.brand},
         {label:'Model', value: vehicle.model},
-        {label:'Voertuigsoort', value: vehicle.vehicleType},
+        {label:'Voertuigtype', value: vehicle.vehicleType},
         {label:'Carrosserie', value: vehicle.bodyStyle},
         {label:'Kleur', value: vehicle.primaryColor},
         {label:'2e kleur', value: vehicle.secondaryColor},
-        {label:'Aantal deuren', value: vehicle.numberOfDoors},
-        {label:'Aantal zitplaatsen', value: vehicle.numberOfSeats},
+        {label:'Deuren', value: vehicle.numberOfDoors},
+        {label:'Zitplaatsen', value: vehicle.numberOfSeats},
         {label:'EU categorie', value: vehicle.europeanCategory},
         {label:'Eerste toelating', value: vehicle.firstAdmissionDateNL},
-        {label:'Eerste NL registratie', value: vehicle.firstRegistrationNLDateNL},
-        {label:'Laatste tenaamstelling', value: vehicle.lastRegistrationDateNL},
-        {label:'Herkomst', value: vehicle.isImport ? "Import" : "Nederlands gekentekend"},
-        {label:'Export', value: vehicle.isExported ? "Ja — geëxporteerd" : null},
-        {label:'Taxi', value: vehicle.isTaxi ? "Ja" : null},
+        {label:'Eerste registratie Nederland', value: vehicle.firstRegistrationNLDateNL},
+        {label:'Laatste eigenaar sinds', value: vehicle.lastRegistrationDateNL},
+        {label:'Herkomst', value: vehicle.isImport ? "Geïmporteerd" : "Origineel Nederlands"},
+        {label:'Export', value: vehicle.isExported ? "Geëxporteerd" : null},
       ]} />
 
       <Section title="Motor en Techniek" emoji="⚙️" rows={[
@@ -85,13 +91,13 @@ export function VehicleDataGrid({ vehicle }: Props) {
         {label:'Vermogen', value: vehicle.powerHP, unit: 'pk'},
         {label:'Vermogen', value: vehicle.powerKW, unit: 'kW'},
         {label:'Cilinderinhoud', value: vehicle.engineDisplacement, unit: 'cc'},
-        {label:'Aantal cilinders', value: vehicle.numberOfCylinders},
+        {label:'Cilinders', value: vehicle.numberOfCylinders},
         {label:'Motorcode', value: vehicle.engineCode},
         {label:'Variant', value: vehicle.variant},
         {label:'CO2 uitstoot', value: vehicle.co2Emission, unit: 'g/km'},
         {label:'Emissienorm', value: vehicle.emissionLevel},
         {label:'Energielabel', value: vehicle.energyLabel},
-       {label:'Geluidsniveau', value: vehicle.soundLevel, unit: 'dB'},
+        {label:'Geluidsniveau', value: vehicle.soundLevel, unit: 'dB'},
         {label:'Roetfilter (DPF)', value: vehicle.hasParticulateFilter === null ? null : vehicle.hasParticulateFilter ? "Ja" : "Nee"},
         {label:'Milieuzone toegang', value: vehicle.milieuzoneAccess},
       ]} />
@@ -105,7 +111,7 @@ export function VehicleDataGrid({ vehicle }: Props) {
       <Section title="Gewicht en Afmetingen" emoji="⚖️" rows={[
         {label:'Leeg gewicht', value: vehicle.massEmpty, unit: 'kg'},
         {label:'Rijklaar gewicht', value: vehicle.massRijklaar, unit: 'kg'},
-        {label:'Max. toegestane massa', value: vehicle.massMax, unit: 'kg'},
+        {label:'Maximale massa', value: vehicle.massMax, unit: 'kg'},
         {label:'Trekgewicht ongeremd', value: vehicle.towWeightUnbraked, unit: 'kg'},
         {label:'Trekgewicht geremd', value: vehicle.towWeightBraked, unit: 'kg'},
         {label:'Wielbasis', value: vehicle.wheelbase, unit: 'cm'},
