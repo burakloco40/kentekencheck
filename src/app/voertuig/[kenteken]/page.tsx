@@ -6,6 +6,7 @@ import { VehicleHeader } from "@/components/vehicle/VehicleHeader";
 import { VehicleDataGrid } from "@/components/vehicle/VehicleDataGrid";
 import { LicensePlateInput } from "@/components/search/LicensePlateInput";
 import { ShareButtons } from "@/components/vehicle/ShareButtons";
+import { VehicleHistoryCard } from "@/components/vehicle/VehicleHistoryCard";
 import type { VehicleData, ErrorCode } from "@/types/vehicle";
 
 interface PageProps {
@@ -43,7 +44,7 @@ export default async function Page({ params }: PageProps) {
   const errorMessage = !result.success ? result.message : null;
 
   return (
-    <div style={{maxWidth:'1000px',margin:'0 auto',padding:'24px 16px 40px'}}>
+    <div style={{maxWidth:'1200px',margin:'0 auto',padding:'24px 16px 40px'}}>
       <div style={{marginBottom:'24px'}}>
         <div style={{display:'flex',alignItems:'center',justifyContent:'space-between',flexWrap:'wrap',gap:'12px'}}>
           <div style={{display:'flex',alignItems:'center',gap:'12px',flexWrap:'wrap'}}>
@@ -60,15 +61,26 @@ export default async function Page({ params }: PageProps) {
           )}
         </div>
       </div>
+
       {errorMessage && (
         <div style={{background:'#fef2f2',border:'1px solid #fca5a5',borderRadius:'12px',padding:'16px',color:'#991b1b',fontSize:'14px'}}>
           {errorMessage}
         </div>
       )}
+
       {vehicle && (
-        <div style={{display:'flex',flexDirection:'column',gap:'16px'}}>
-          <VehicleHeader vehicle={vehicle} />
-          <VehicleDataGrid vehicle={vehicle} />
+        <div>
+          <div style={{marginBottom:'16px'}}>
+            <VehicleHeader vehicle={vehicle} />
+          </div>
+          <div style={{display:'grid',gridTemplateColumns:'1fr 340px',gap:'20px',alignItems:'start'}}>
+            <div>
+              <VehicleDataGrid vehicle={vehicle} />
+            </div>
+            <div style={{position:'sticky',top:'80px'}}>
+              <VehicleHistoryCard vehicle={vehicle} />
+            </div>
+          </div>
         </div>
       )}
     </div>
