@@ -4,6 +4,7 @@ import { formatPrice } from "@/lib/utils/formatters";
 import { AIAdvice } from "./AIAdvice";
 import { APKHistory } from "./APKHistory";
 import { RecallActions } from "./RecallActions";
+import { VehicleHistoryCard } from "./VehicleHistoryCard";
 
 interface Props { vehicle: VehicleData; }
 
@@ -129,6 +130,8 @@ export function VehicleDataGrid({ vehicle }: Props) {
       ]} />
 
       <APKHistory history={vehicle.apkHistory} apkExpiryDateNL={vehicle.apkExpiryDateNL} />
+
+      <VehicleHistoryCard vehicle={vehicle} />
 
       <AIAdvice vehicle={vehicle} />
 
