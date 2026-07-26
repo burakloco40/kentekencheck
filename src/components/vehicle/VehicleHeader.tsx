@@ -1,57 +1,138 @@
 ﻿"use client";
 import type { VehicleData } from "@/types/vehicle";
+import { useState } from "react";
 
 interface Props { vehicle: VehicleData; }
 
-const btnStyle: React.CSSProperties = {
-  display: 'block',
-  textAlign: 'center',
-  background: '#F5C518',
-  color: '#0f2040',
-  padding: '12px 24px',
-  borderRadius: '10px',
-  fontWeight: 700,
-  fontSize: '14px',
-  textDecoration: 'none',
-};
+function getBrandLogo(brand: string): string | null {
+  const map: Record<string, string> = {
+    TOYOTA: "toyota", VOLKSWAGEN: "volkswagen", BMW: "bmw",
+    MERCEDES: "mercedes-benz", AUDI: "audi", FORD: "ford",
+    OPEL: "opel", RENAULT: "renault", PEUGEOT: "peugeot",
+    CITROEN: "citroen", NISSAN: "nissan", HONDA: "honda",
+    MAZDA: "mazda", VOLVO: "volvo", SKODA: "skoda",
+    SEAT: "seat", HYUNDAI: "hyundai", KIA: "kia",
+    FIAT: "fiat", SUZUKI: "suzuki", MITSUBISHI: "mitsubishi",
+    DACIA: "dacia", MINI: "mini", PORSCHE: "porsche",
+    TESLA: "tesla", JEEP: "jeep", DODGE: "dodge",
+    CHEVROLET: "chevrolet", LAND: "land-rover", JAGUAR: "jaguar",
+    LEXUS: "lexus", ALFA: "alfa-romeo", SUBARU: "subaru",
+    SMART: "smart", SAAB: "saab",
+  };
+  for (const [key, value] of Object.entries(map)) {
+    if (brand.toUpperCase().includes(key)) {
+      return `https://raw.githubusercontent.com/filippofilip95/car-logos-dataset/master/logos/optimized/${value}.png`;
+    }
+  }
+  return null;
+}
 
-export function VehicleHistoryCard({ vehicle }: Props) {
-  const affiliateUrl = `https://www.carvertical.com/nl/check?referral=JOUW_AFFILIATE_CODE&plate=${vehicle.plateRaw}&country=nl`;
+function BrandLogo({ brand }: { brand: string }) {
+  const [show, setShow] = useState(true);
+  const url = getBrandLogo(brand);
+  if (!url || !show) return null;
+  return (
+    <div style={{width:'56px',height:'56px',background:'white',borderRadius:'10px',padding:'6px',flexShrink:0,boxShadow:'0 2px 8px rgba(0,0,0,0.2)',display:'flex',alignItems:'center',justifyContent:'center'}}>
+      <img src={url} alt={brand} style={{width:'44px',height:'44px',objectFit:'contain'}} onError={() => setShow(false)} />
+    </div>
+  );
+}
+
+export function VehicleHeader({ vehicle }: Props) {
+  const apkBg = vehicle.apkStatus === "expired" ? "#fef2f2" : "#f0fdf4";
+  const apkBorder = vehicle.apkStatus === "expired" ? "#fca5a5" : "#86efac";
+  const apkText = vehicle.apkStatus === "expired" ? "#991b1b" : "#166534";
+  const apkLabel = vehicle.apkStatus === "expired" ? "✕ APK verlopen" : vehicle.apkStatus === "valid" ? "✓ APK geldig" : "– APK onbekend";
+  const insBg = vehicle.insuranceStatus === "insured" ? "#f0fdf4" : vehicle.insuranceStatus === "not_insured" ? "#fef2f2" : "#f9fafb";
+  const insBorder = vehicle.insuranceStatus === "insured" ? "#86efac" : vehicle.insuranceStatus === "not_insured" ? "#fca5a5" : "#e5e7eb";
+  const insText = vehicle.insuranceStatus === "insured" ? "#166534" : vehicle.insuranceStatus === "not_insured" ? "#991b1b" : "#6b7280";
+  const insLabel = vehicle.insuranceStatus === "insured" ? "✓ WAM verzekerd" : vehicle.insuranceStatus === "not_insured" ? "✕ Niet verzekerd" : "– Verzekering onbekend";
 
   return (
-    <div style={{borderRadius:'14px',overflow:'hidden',border:'2px solid #e5e7eb',boxShadow:'0 2px 8px rgba(0,0,0,0.08)'}}>
-      <div style={{background:'linear-gradient(135deg, #1e3a5f, #2d5a8e)',padding:'16px 20px',display:'flex',alignItems:'center',gap:'12px'}}>
-        <span style={{fontSize:'24px'}}>🔎</span>
-        <div>
-          <h3 style={{fontSize:'15px',fontWeight:700,color:'white',margin:'0 0 2px'}}>Volledige voertuighistorie</h3>
-          <p style={{fontSize:'12px',color:'rgba(255,255,255,0.6)',margin:0}}>Ontdek wat de RDW niet toont</p>
-        </div>
-      </div>
-      <div style={{background:'white',padding:'20px'}}>
-        <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:'12px',marginBottom:'20px'}}>
-          {[
-            {icon:'💥', label:'Schadehistorie'},
-            {icon:'📍', label:'Kilometerstand verificatie'},
-            {icon:'🌍', label:'Internationale geschiedenis'},
-            {icon:'👤', label:'Aantal vorige eigenaren'},
-            {icon:'🔧', label:'Onderhoudshistorie'},
-            {icon:'🚨', label:'Gestolen voertuig check'},
-          ].map(item => (
-            <div key={item.label} style={{display:'flex',alignItems:'center',gap:'8px'}}>
-              <span style={{fontSize:'16px'}}>{item.icon}</span>
-              <span style={{fontSize:'13px',color:'#374151',fontWeight:500}}>{item.label}</span>
+    <div style={{background:'#0f2040',borderRadius:'16px',padding:'24px 28px',color:'white'}}>
+      <div style={{display:'flex',flexWrap:'wrap',justifyContent:'space-between',alignItems:'flex-start',gap:'20px'}}>
+        <div style={{flex:1,minWidth:'240px'}}>
+          <div style={{display:'flex',alignItems:'center',gap:'16px',marginBottom:'12px'}}>
+            <BrandLogo brand={vehicle.brand} />
+            <div>
+              <p style={{fontSize:'11px',fontWeight:600,letterSpacing:'0.12em',textTransform:'uppercase',color:'rgba(255,255,255,0.45)',margin:'0 0 4px 0'}}>{vehicle.vehicleType}</p>
+              <h1 style={{fontSize:'28px',fontWeight:800,color:'white',margin:0,lineHeight:1.1}}>
+                {vehicle.brand} <span style={{color:'#F5C518'}}>{vehicle.model}</span>
+              </h1>
             </div>
-          ))}
+          </div>
+          {vehicle.bodyStyle && vehicle.bodyStyle !== "Onbekend" && (
+            <p style={{fontSize:'14px',color:'rgba(255,255,255,0.45)',margin:'0 0 16px 0'}}>
+              {vehicle.bodyStyle}{vehicle.firstAdmissionDateNL ? " · " + vehicle.firstAdmissionDateNL : ""}
+            </p>
+          )}
+          <div style={{display:'flex',flexWrap:'wrap',gap:'8px',marginBottom:'20px'}}>
+            <span style={{fontSize:'12px',fontWeight:700,padding:'5px 12px',borderRadius:'20px',border:'2px solid '+apkBorder,background:apkBg,color:apkText}}>{apkLabel}</span>
+            <span style={{fontSize:'12px',fontWeight:700,padding:'5px 12px',borderRadius:'20px',border:'2px solid '+insBorder,background:insBg,color:insText}}>{insLabel}</span>
+            {vehicle.napStatus === "logisch" && (
+              <span style={{fontSize:'12px',fontWeight:700,padding:'5px 12px',borderRadius:'20px',border:'2px solid #86efac',background:'#f0fdf4',color:'#166534'}}>✓ NAP</span>
+            )}
+            {vehicle.napStatus === "onlogisch" && (
+              <span style={{fontSize:'12px',fontWeight:700,padding:'5px 12px',borderRadius:'20px',border:'2px solid #fca5a5',background:'#fef2f2',color:'#991b1b'}}>✕ Kilometerstand onlogisch</span>
+            )}
+            {vehicle.isImport && (
+              <span style={{fontSize:'12px',fontWeight:700,padding:'5px 12px',borderRadius:'20px',border:'2px solid #fed7aa',background:'#fff7ed',color:'#9a3412'}}>🌍 Geïmporteerd</span>
+            )}
+            {!vehicle.isImport && (
+              <span style={{fontSize:'12px',fontWeight:700,padding:'5px 12px',borderRadius:'20px',border:'2px solid #86efac',background:'#f0fdf4',color:'#166534'}}>✓ Origineel Nederlands</span>
+            )}
+            {vehicle.hasRecallAction && (
+              <span style={{fontSize:'12px',fontWeight:700,padding:'5px 12px',borderRadius:'20px',border:'2px solid #fca5a5',background:'#fef2f2',color:'#991b1b'}}>⚠ Terugroepactie</span>
+            )}
+            {vehicle.isExported && (
+              <span style={{fontSize:'12px',fontWeight:700,padding:'5px 12px',borderRadius:'20px',border:'2px solid #e5e7eb',background:'#f9fafb',color:'#6b7280'}}>📦 Geëxporteerd</span>
+            )}
+            {vehicle.isTaxi && (
+              <span style={{fontSize:'12px',fontWeight:700,padding:'5px 12px',borderRadius:'20px',border:'2px solid #fed7aa',background:'#fff7ed',color:'#9a3412'}}>🚕 Taxi</span>
+            )}
+          </div>
+          <div style={{display:'flex',flexWrap:'wrap',gap:'24px'}}>
+            {vehicle.powerHP && (
+              <div>
+                <p style={{fontSize:'11px',color:'rgba(255,255,255,0.4)',margin:'0 0 2px 0',textTransform:'uppercase',letterSpacing:'0.08em'}}>Vermogen</p>
+                <p style={{fontSize:'22px',fontWeight:800,color:'white',margin:0}}>{vehicle.powerHP} <span style={{fontSize:'13px',fontWeight:400,color:'rgba(255,255,255,0.5)'}}>pk</span></p>
+              </div>
+            )}
+            {vehicle.fuelType && (
+              <div>
+                <p style={{fontSize:'11px',color:'rgba(255,255,255,0.4)',margin:'0 0 2px 0',textTransform:'uppercase',letterSpacing:'0.08em'}}>Brandstof</p>
+                <p style={{fontSize:'22px',fontWeight:800,color:'white',margin:0}}>{vehicle.fuelType}</p>
+              </div>
+            )}
+            {vehicle.engineDisplacement && (
+              <div>
+                <p style={{fontSize:'11px',color:'rgba(255,255,255,0.4)',margin:'0 0 2px 0',textTransform:'uppercase',letterSpacing:'0.08em'}}>Cilinderinhoud</p>
+                <p style={{fontSize:'22px',fontWeight:800,color:'white',margin:0}}>{vehicle.engineDisplacement} <span style={{fontSize:'13px',fontWeight:400,color:'rgba(255,255,255,0.5)'}}>cc</span></p>
+              </div>
+            )}
+          </div>
         </div>
-        <p style={{fontSize:'12px',color:'#9ca3af',margin:'0 0 16px',lineHeight:'1.6'}}>
-          De gratis RDW data geeft een goed beeld, maar voor een complete voertuighistorie raden wij een rapport aan via carVertical.
-        </p>
-        <a href={affiliateUrl} target="_blank" rel="noopener noreferrer" style={btnStyle}>
-          Bekijk volledige voertuighistorie
-        </a>
-        <p style={{fontSize:'11px',color:'#9ca3af',textAlign:'center',margin:'8px 0 0'}}>
-          Aangeboden door carVertical
-        </p>
+        <div style={{flexShrink:0,display:'flex',flexDirection:'column',alignItems:'center',gap:'12px'}}>
+          <div style={{display:'inline-flex',borderRadius:'6px',border:'2px solid rgba(212,160,23,0.4)',overflow:'hidden',boxShadow:'0 4px 12px rgba(0,0,0,0.3)'}}>
+            <div style={{background:'#162d58',width:'36px',display:'flex',flexDirection:'column',alignItems:'center',justifyContent:'center',gap:'4px',padding:'4px'}}>
+              <div style={{display:'flex',flexWrap:'wrap',justifyContent:'center',width:'18px',gap:'2px'}}>
+                {Array.from({length:12}).map((_,i)=>(
+                  <div key={i} style={{width:'3px',height:'3px',borderRadius:'50%',background:'#F5C518'}} />
+                ))}
+              </div>
+              <span style={{fontFamily:'Courier Prime, monospace',fontSize:'9px',fontWeight:700,color:'white',letterSpacing:'0.05em'}}>NL</span>
+            </div>
+            <div style={{background:'#F5C518',padding:'8px 20px',display:'flex',alignItems:'center'}}>
+              <span style={{fontFamily:'Courier Prime, monospace',fontSize:'24px',fontWeight:700,color:'#0f2040',letterSpacing:'0.15em'}}>{vehicle.plate}</span>
+            </div>
+          </div>
+          {vehicle.lastRegistrationDateNL && (
+            <div style={{background:'rgba(255,255,255,0.08)',border:'1px solid rgba(255,255,255,0.15)',borderRadius:'10px',padding:'10px 16px',textAlign:'center'}}>
+              <p style={{fontSize:'11px',color:'rgba(255,255,255,0.45)',margin:'0 0 4px',textTransform:'uppercase',letterSpacing:'0.08em',fontWeight:600}}>Laatste eigenaar sinds</p>
+              <p style={{fontSize:'15px',color:'white',fontWeight:700,margin:0}}>{vehicle.lastRegistrationDateNL}</p>
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );

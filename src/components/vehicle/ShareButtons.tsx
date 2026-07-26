@@ -1,58 +1,41 @@
 "use client";
-import type { VehicleData } from "@/types/vehicle";
+import { useState } from "react";
 
-interface Props { vehicle: VehicleData; }
+interface Props {
+  plate: string;
+  brand: string;
+  model: string;
+}
 
-const btnStyle: React.CSSProperties = {
-  display: 'block',
-  textAlign: 'center',
-  background: '#F5C518',
-  color: '#0f2040',
-  padding: '12px 24px',
-  borderRadius: '10px',
-  fontWeight: 700,
-  fontSize: '14px',
-  textDecoration: 'none',
-};
+export function ShareButtons({ plate, brand, model }: Props) {
+  const [copied, setCopied] = useState(false);
+  const url = `https://kentekenrdwcheck.nl/voertuig/${plate.replace(/-/g, "")}`;
+  const text = `Bekijk de voertuiggegevens van ${brand} ${model} (${plate}) op Kentekencheck:`;
 
-export function VehicleHistoryCard({ vehicle }: Props) {
-  const affiliateUrl = `https://www.carvertical.com/nl/check?referral=JOUW_AFFILIATE_CODE&plate=${vehicle.plateRaw}&country=nl`;
+  function handleCopy() {
+    navigator.clipboard.writeText(url);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  }
+
+  function handleWhatsApp() {
+    window.open(`https://wa.me/?text=${encodeURIComponent(text + " " + url)}`, "_blank");
+  }
 
   return (
-    <div style={{borderRadius:'14px',overflow:'hidden',border:'2px solid #e5e7eb',boxShadow:'0 2px 8px rgba(0,0,0,0.08)'}}>
-      <div style={{background:'linear-gradient(135deg, #1e3a5f, #2d5a8e)',padding:'16px 20px',display:'flex',alignItems:'center',gap:'12px'}}>
-        <span style={{fontSize:'24px'}}>🔎</span>
-        <div>
-          <h3 style={{fontSize:'15px',fontWeight:700,color:'white',margin:'0 0 2px'}}>Volledige voertuighistorie</h3>
-          <p style={{fontSize:'12px',color:'rgba(255,255,255,0.6)',margin:0}}>Ontdek wat de RDW niet toont</p>
-        </div>
-      </div>
-      <div style={{background:'white',padding:'20px'}}>
-        <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:'12px',marginBottom:'20px'}}>
-          {[
-            {icon:'💥', label:'Schadehistorie'},
-            {icon:'📍', label:'Kilometerstand verificatie'},
-            {icon:'🌍', label:'Internationale geschiedenis'},
-            {icon:'👤', label:'Aantal vorige eigenaren'},
-            {icon:'🔧', label:'Onderhoudshistorie'},
-            {icon:'🚨', label:'Gestolen voertuig check'},
-          ].map(item => (
-            <div key={item.label} style={{display:'flex',alignItems:'center',gap:'8px'}}>
-              <span style={{fontSize:'16px'}}>{item.icon}</span>
-              <span style={{fontSize:'13px',color:'#374151',fontWeight:500}}>{item.label}</span>
-            </div>
-          ))}
-        </div>
-        <p style={{fontSize:'12px',color:'#9ca3af',margin:'0 0 16px',lineHeight:'1.6'}}>
-          De gratis RDW data geeft een goed beeld, maar voor een complete voertuighistorie raden wij een rapport aan via carVertical.
-        </p>
-        <a href={affiliateUrl} target="_blank" rel="noopener noreferrer" style={btnStyle}>
-          Bekijk volledige voertuighistorie
-        </a>
-        <p style={{fontSize:'11px',color:'#9ca3af',textAlign:'center',margin:'8px 0 0'}}>
-          Aangeboden door carVertical
-        </p>
-      </div>
+    <div style={{display:'flex',gap:'8px',flexWrap:'wrap'}}>
+      <button
+        onClick={handleWhatsApp}
+        style={{display:'flex',alignItems:'center',gap:'6px',padding:'8px 16px',background:'#25D366',color:'white',border:'none',borderRadius:'8px',fontSize:'13px',fontWeight:600,cursor:'pointer'}}
+      >
+        WhatsApp
+      </button>
+      <button
+        onClick={handleCopy}
+        style={{display:'flex',alignItems:'center',gap:'6px',padding:'8px 16px',background: copied ? '#16a34a' : 'white',color: copied ? 'white' : '#374151',border:'1px solid #e5e7eb',borderRadius:'8px',fontSize:'13px',fontWeight:600,cursor:'pointer'}}
+      >
+        {copied ? 'Gekopieerd!' : 'Kopieer link'}
+      </button>
     </div>
   );
 }
