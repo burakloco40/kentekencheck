@@ -12,29 +12,30 @@ Analyseer dit specifieke voertuig:
 - Motor: ${vehicle.engineDisplacement ? vehicle.engineDisplacement + "cc" : ""} ${vehicle.fuelType} ${vehicle.powerHP ? vehicle.powerHP + "pk" : ""}
 - Cilinderinhoud: ${vehicle.engineDisplacement ?? "onbekend"}cc
 - Emissienorm: ${vehicle.emissionLevel ?? "onbekend"}
-- Kilometerstand: onbekend
 - Herkomst: ${vehicle.isImport ? "Import" : "Nederlands"}
 
-Geef een gedetailleerde analyse op basis van wat bekend is van forums en eigenaarservaringen:
+Geef het volgende terug in dit exacte formaat:
 
 KOPPELMOMENT: [exacte Nm waarde voor deze specifieke motorvariant]
 
+BANDENMAAT: [standaard bandenmaat voor dit model en bouwjaar, bijv. 195/65R15. Alleen het meest voorkomende formaat.]
+
 BEKENDE PROBLEMEN:
-- [Specifiek technisch probleem 1 dat bekend is van forums voor dit model/motor, met component naam]
+- [Specifiek technisch probleem 1]
 - [Specifiek technisch probleem 2]
 - [Specifiek technisch probleem 3]
 
-BETROUWBAARHEIDSSCORE: [cijfer 1-10] — [korte uitleg waarom]
+BETROUWBAARHEIDSSCORE: [cijfer 1-10] — [korte uitleg]
 
-AANKOOPADVIES: [2-3 zinnen praktisch advies specifiek voor dit model en bouwjaar]
+AANKOOPADVIES: [2-3 zinnen]
 
 WAAR OP LETTEN BIJ AANKOOP:
-- [Specifiek controlepunt 1]
-- [Specifiek controlepunt 2]
+- [punt 1]
+- [punt 2]
 
-ONDERHOUDSADVIES: [Specifieke onderhoudspunten voor dit model]
+ONDERHOUDSADVIES: [specifieke onderhoudspunten]
 
-Schrijf in het Nederlands. Wees specifiek en noem echte technische componenten. Geen vage algemene uitspraken.`;
+Schrijf in het Nederlands. Wees specifiek.`;
 
   try {
     const response = await fetch("https://api.groq.com/openai/v1/chat/completions", {
@@ -51,11 +52,7 @@ Schrijf in het Nederlands. Wees specifiek en noem echte technische componenten. 
     });
 
     const data = await response.json();
-
-    if (!response.ok) {
-      return NextResponse.json({ advice: null, error: data });
-    }
-
+    if (!response.ok) return NextResponse.json({ advice: null, error: data });
     const advice = data.choices?.[0]?.message?.content ?? null;
     return NextResponse.json({ advice });
   } catch (err) {
