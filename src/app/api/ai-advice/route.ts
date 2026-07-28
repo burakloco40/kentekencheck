@@ -11,37 +11,34 @@ Analyseer dit specifieke voertuig:
 - Bouwjaar: ${vehicle.firstAdmissionDateNL ?? "onbekend"}
 - Motor: ${vehicle.engineDisplacement ? vehicle.engineDisplacement + "cc" : ""} ${vehicle.fuelType} ${vehicle.powerHP ? vehicle.powerHP + "pk" : ""}
 - Emissienorm: ${vehicle.emissionLevel ?? "onbekend"}
-- Kilometerstand: onbekend (ga uit van gemiddeld gebruik voor dit bouwjaar)
 - Herkomst: ${vehicle.isImport ? "Import" : "Nederlands"}
 
-Geef het volgende terug in dit EXACTE formaat zonder afwijkingen:
+Geef het volgende terug in dit EXACTE formaat:
 
-KOPPELMOMENT: [Nm waarde]
+KOPPELMOMENT: [Nm waarde voor deze specifieke motorvariant]
 BANDENMAAT: [standaard bandenmaat bijv. 195/65R15]
 AANDRIJVING: [FWD, RWD of AWD]
-DISTRIBUTIE: [Riem of Ketting, inclusief vervangingsinterval indien riem]
 TURBO: [Ja of Nee]
-ONDERHOUDSKOSTEN: [geschatte jaarlijkse onderhoudskosten in euros, realistisch voor Nederlands gebruik]
-FACELIFT: [jaar waarin de facelift of generatiewijziging begon, of "Geen facelift" indien niet van toepassing]
-MARKTWAARDE: [realistische huidige marktwaarde in euros gebaseerd op Nederlandse Marktplaats/AutoTrack prijzen voor dit bouwjaar met gemiddeld kilometerstand, geef een range bijv. 3500-5500]
+ONDERHOUDSKOSTEN: [geschatte jaarlijkse onderhoudskosten in euros voor Nederlands gebruik]
+FACELIFT: [jaar van facelift of generatiewijziging, of "Geen" indien niet van toepassing]
 AFSCHRIJVING: [geschatte afschrijving per jaar in procenten]
 
 BEKENDE PROBLEMEN:
-- [probleem 1]
-- [probleem 2]
-- [probleem 3]
+- [specifiek probleem 1 met componentnaam]
+- [specifiek probleem 2 met componentnaam]
+- [specifiek probleem 3 met componentnaam]
 
-BETROUWBAARHEIDSSCORE: [cijfer 1-10] — [uitleg]
+BETROUWBAARHEIDSSCORE: [cijfer 1-10] — [korte uitleg]
 
-AANKOOPADVIES: [2-3 zinnen]
+AANKOOPADVIES: [2-3 zinnen praktisch advies]
 
 WAAR OP LETTEN BIJ AANKOOP:
-- [punt 1]
-- [punt 2]
+- [controlepunt 1]
+- [controlepunt 2]
 
-ONDERHOUDSADVIES: [specifieke punten]
+ONDERHOUDSADVIES: [specifieke onderhoudspunten voor dit model]
 
-Schrijf in het Nederlands. Wees realistisch en specifiek. Voor marktwaarde: baseer dit op wat dit model werkelijk kost op Marktplaats.nl in Nederland.`;
+Schrijf in het Nederlands. Wees specifiek en noem echte technische componenten.`;
 
   try {
     const response = await fetch("https://api.groq.com/openai/v1/chat/completions", {

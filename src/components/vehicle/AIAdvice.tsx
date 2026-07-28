@@ -13,17 +13,17 @@ function TireVisual({ size }: { size: string }) {
 
   return (
     <div>
-      <div style={{display:'flex',alignItems:'center',gap:'16px',marginBottom:'12px'}}>
-        <span style={{fontSize:'20px',fontWeight:800,color:'#0f2040'}}>{size}</span>
+      <div style={{marginBottom:'10px'}}>
+        <span style={{fontSize:'18px',fontWeight:800,color:'#0f2040'}}>{size}</span>
       </div>
-      <div style={{display:'flex',gap:'12px',alignItems:'flex-end'}}>
+      <div style={{display:'flex',gap:'10px',alignItems:'flex-end'}}>
         {[
           {label:'Breedte', value: width, unit: 'mm'},
           {label:'Hoogte', value: height, unit: '%'},
           {label:'Velg', value: `R${rim}`, unit: ''},
         ].map(item => (
           <div key={item.label} style={{textAlign:'center'}}>
-            <div style={{background:'#F5C518',color:'#0f2040',borderRadius:'6px',padding:'4px 10px',fontWeight:700,fontSize:'14px',marginBottom:'4px'}}>
+            <div style={{background:'#F5C518',color:'#0f2040',borderRadius:'6px',padding:'4px 10px',fontWeight:700,fontSize:'13px',marginBottom:'4px'}}>
               {item.value}{item.unit}
             </div>
             <div style={{fontSize:'11px',color:'#6b7280'}}>{item.label}</div>
@@ -67,20 +67,18 @@ export function AIAdvice({ vehicle }: Props) {
         const data = await res.json();
         if (data.advice) {
           const full: string = data.advice;
-
-          const extracted: Record<string, string> = {};
           const fields = [
             {key: 'torque', field: 'KOPPELMOMENT'},
             {key: 'drive', field: 'AANDRIJVING'},
-            {key: 'timing', field: 'DISTRIBUTIE'},
             {key: 'turbo', field: 'TURBO'},
             {key: 'maintenance', field: 'ONDERHOUDSKOSTEN'},
             {key: 'facelift', field: 'FACELIFT'},
-            {key: 'marketValue', field: 'MARKTWAARDE'},
             {key: 'depreciation', field: 'AFSCHRIJVING'},
           ];
 
+          const extracted: Record<string, string> = {};
           let cleaned = full;
+
           for (const {key, field} of fields) {
             const val = extractField(full, field);
             if (val) {
@@ -133,11 +131,9 @@ export function AIAdvice({ vehicle }: Props) {
               <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fill,minmax(150px,1fr))',gap:'10px'}}>
                 {specs.torque && <SpecCard label="Koppelmoment" value={specs.torque} icon="🔧" />}
                 {specs.drive && <SpecCard label="Aandrijving" value={specs.drive} icon="⚙️" />}
-                {specs.timing && <SpecCard label="Distributie" value={specs.timing} icon="🔩" />}
                 {specs.turbo && <SpecCard label="Turbo" value={specs.turbo} icon="💨" />}
                 {specs.maintenance && <SpecCard label="Onderhoudskosten/jaar" value={specs.maintenance} icon="🔨" />}
-                {specs.facelift && <SpecCard label="Facelift vanaf" value={specs.facelift} icon="✨" />}
-                {specs.marketValue && <SpecCard label="Marktwaarde" value={specs.marketValue} icon="💶" />}
+                {specs.facelift && <SpecCard label="Facelift" value={specs.facelift} icon="✨" />}
                 {specs.depreciation && <SpecCard label="Afschrijving/jaar" value={specs.depreciation} icon="📉" />}
               </div>
             </>
