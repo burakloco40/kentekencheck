@@ -4,28 +4,33 @@ import type { VehicleData } from "@/types/vehicle";
 export async function POST(req: NextRequest) {
   const { vehicle }: { vehicle: VehicleData } = await req.json();
 
-  const prompt = `Je bent een Nederlandse auto-expert met diepgaande kennis van autoforums, Reddit (r/cars, r/mechanicadvice), Tweakers autoforum, Autoweek en andere autosites.
+  const prompt = `Je bent een Nederlandse auto-expert met diepgaande kennis van autoforums, Reddit, Tweakers en Autoweek.
 
 Analyseer dit specifieke voertuig:
 - Merk/Model: ${vehicle.brand} ${vehicle.model}
 - Bouwjaar: ${vehicle.firstAdmissionDateNL ?? "onbekend"}
 - Motor: ${vehicle.engineDisplacement ? vehicle.engineDisplacement + "cc" : ""} ${vehicle.fuelType} ${vehicle.powerHP ? vehicle.powerHP + "pk" : ""}
-- Cilinderinhoud: ${vehicle.engineDisplacement ?? "onbekend"}cc
 - Emissienorm: ${vehicle.emissionLevel ?? "onbekend"}
 - Herkomst: ${vehicle.isImport ? "Import" : "Nederlands"}
 
-Geef het volgende terug in dit exacte formaat:
+Geef het volgende terug in dit EXACTE formaat zonder afwijkingen:
 
-KOPPELMOMENT: [exacte Nm waarde voor deze specifieke motorvariant]
-
-BANDENMAAT: [standaard bandenmaat voor dit model en bouwjaar, bijv. 195/65R15. Alleen het meest voorkomende formaat.]
+KOPPELMOMENT: [Nm waarde]
+BANDENMAAT: [standaard bandenmaat bijv. 195/65R15]
+AANDRIJVING: [FWD, RWD of AWD]
+DISTRIBUTIE: [Riem of Ketting, inclusief vervangingsinterval indien riem]
+TURBO: [Ja of Nee]
+ONDERHOUDSKOSTEN: [geschatte jaarlijkse onderhoudskosten in euro's]
+BESTE_BOUWJAAR: [beste bouwjaar of periode voor dit model]
+MARKTWAARDE: [geschatte huidige marktwaarde in euros voor dit bouwjaar]
+AFSCHRIJVING: [geschatte afschrijving per jaar in procenten]
 
 BEKENDE PROBLEMEN:
-- [Specifiek technisch probleem 1]
-- [Specifiek technisch probleem 2]
-- [Specifiek technisch probleem 3]
+- [probleem 1]
+- [probleem 2]
+- [probleem 3]
 
-BETROUWBAARHEIDSSCORE: [cijfer 1-10] — [korte uitleg]
+BETROUWBAARHEIDSSCORE: [cijfer 1-10] — [uitleg]
 
 AANKOOPADVIES: [2-3 zinnen]
 
@@ -33,7 +38,7 @@ WAAR OP LETTEN BIJ AANKOOP:
 - [punt 1]
 - [punt 2]
 
-ONDERHOUDSADVIES: [specifieke onderhoudspunten]
+ONDERHOUDSADVIES: [specifieke punten]
 
 Schrijf in het Nederlands. Wees specifiek.`;
 
@@ -47,7 +52,7 @@ Schrijf in het Nederlands. Wees specifiek.`;
       body: JSON.stringify({
         model: "llama-3.3-70b-versatile",
         messages: [{ role: "user", content: prompt }],
-        max_tokens: 800,
+        max_tokens: 1000,
       }),
     });
 
