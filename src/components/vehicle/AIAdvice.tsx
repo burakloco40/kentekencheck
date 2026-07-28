@@ -75,7 +75,7 @@ export function AIAdvice({ vehicle }: Props) {
             {key: 'timing', field: 'DISTRIBUTIE'},
             {key: 'turbo', field: 'TURBO'},
             {key: 'maintenance', field: 'ONDERHOUDSKOSTEN'},
-            {key: 'bestYear', field: 'BESTE_BOUWJAAR'},
+            {key: 'facelift', field: 'FACELIFT'},
             {key: 'marketValue', field: 'MARKTWAARDE'},
             {key: 'depreciation', field: 'AFSCHRIJVING'},
           ];
@@ -136,7 +136,7 @@ export function AIAdvice({ vehicle }: Props) {
                 {specs.timing && <SpecCard label="Distributie" value={specs.timing} icon="🔩" />}
                 {specs.turbo && <SpecCard label="Turbo" value={specs.turbo} icon="💨" />}
                 {specs.maintenance && <SpecCard label="Onderhoudskosten/jaar" value={specs.maintenance} icon="🔨" />}
-                {specs.bestYear && <SpecCard label="Beste bouwjaar" value={specs.bestYear} icon="⭐" />}
+                {specs.facelift && <SpecCard label="Facelift vanaf" value={specs.facelift} icon="✨" />}
                 {specs.marketValue && <SpecCard label="Marktwaarde" value={specs.marketValue} icon="💶" />}
                 {specs.depreciation && <SpecCard label="Afschrijving/jaar" value={specs.depreciation} icon="📉" />}
               </div>

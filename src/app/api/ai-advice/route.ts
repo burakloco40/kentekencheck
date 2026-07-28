@@ -11,6 +11,7 @@ Analyseer dit specifieke voertuig:
 - Bouwjaar: ${vehicle.firstAdmissionDateNL ?? "onbekend"}
 - Motor: ${vehicle.engineDisplacement ? vehicle.engineDisplacement + "cc" : ""} ${vehicle.fuelType} ${vehicle.powerHP ? vehicle.powerHP + "pk" : ""}
 - Emissienorm: ${vehicle.emissionLevel ?? "onbekend"}
+- Kilometerstand: onbekend (ga uit van gemiddeld gebruik voor dit bouwjaar)
 - Herkomst: ${vehicle.isImport ? "Import" : "Nederlands"}
 
 Geef het volgende terug in dit EXACTE formaat zonder afwijkingen:
@@ -20,9 +21,9 @@ BANDENMAAT: [standaard bandenmaat bijv. 195/65R15]
 AANDRIJVING: [FWD, RWD of AWD]
 DISTRIBUTIE: [Riem of Ketting, inclusief vervangingsinterval indien riem]
 TURBO: [Ja of Nee]
-ONDERHOUDSKOSTEN: [geschatte jaarlijkse onderhoudskosten in euro's]
-BESTE_BOUWJAAR: [beste bouwjaar of periode voor dit model]
-MARKTWAARDE: [geschatte huidige marktwaarde in euros voor dit bouwjaar]
+ONDERHOUDSKOSTEN: [geschatte jaarlijkse onderhoudskosten in euros, realistisch voor Nederlands gebruik]
+FACELIFT: [jaar waarin de facelift of generatiewijziging begon, of "Geen facelift" indien niet van toepassing]
+MARKTWAARDE: [realistische huidige marktwaarde in euros gebaseerd op Nederlandse Marktplaats/AutoTrack prijzen voor dit bouwjaar met gemiddeld kilometerstand, geef een range bijv. 3500-5500]
 AFSCHRIJVING: [geschatte afschrijving per jaar in procenten]
 
 BEKENDE PROBLEMEN:
@@ -40,7 +41,7 @@ WAAR OP LETTEN BIJ AANKOOP:
 
 ONDERHOUDSADVIES: [specifieke punten]
 
-Schrijf in het Nederlands. Wees specifiek.`;
+Schrijf in het Nederlands. Wees realistisch en specifiek. Voor marktwaarde: baseer dit op wat dit model werkelijk kost op Marktplaats.nl in Nederland.`;
 
   try {
     const response = await fetch("https://api.groq.com/openai/v1/chat/completions", {
