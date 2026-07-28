@@ -16,7 +16,7 @@ const btnStyle: React.CSSProperties = {
 };
 
 export function VehicleHistoryCard({ vehicle }: Props) {
-  const affiliateUrl = `https://www.carvertical.com/nl/check?referral=JOUW_AFFILIATE_CODE&plate=${vehicle.plateRaw}&country=nl`;
+ const affiliateUrl = `https://www.carvertical.deal/2GKDGZK/CT4G5Z/?source_id=AFF&sub1=kentekenrdwcheck&plate=${vehicle.plateRaw}&country=nl`;
 
   return (
     <div style={{borderRadius:'14px',overflow:'hidden',border:'2px solid #e5e7eb',boxShadow:'0 2px 8px rgba(0,0,0,0.08)'}}>
