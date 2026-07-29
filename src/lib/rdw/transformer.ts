@@ -21,21 +21,25 @@ function formatDatumNLFromYYYYMMDD(d: string | undefined): string {
 function determineFuelType(fuelRecords: RDWFuelRaw[]): string {
   if (fuelRecords.length === 0) return "Onbekend";
   const types = fuelRecords.map(r => r.brandstof_omschrijving?.toLowerCase() ?? "");
-  const hybridClass = fuelRecords.find(r => r.klasse_hybride_elektrisch_voertuig)?.klasse_hybride_elektrisch_voertuig?.toUpperCase() ?? "";
+  const hybridRecord = fuelRecords.find(r => r.klasse_hybride_elektrisch_voertuig);
+  const hybridClass = hybridRecord?.klasse_hybride_elektrisch_voertuig?.toUpperCase() ?? "";
   const hasBenzine = types.some(t => t.includes("benzine"));
   const hasDiesel = types.some(t => t.includes("diesel"));
   const hasElektrisch = types.some(t => t.includes("elektriciteit") || t.includes("elektrisch"));
   const hasWaterstof = types.some(t => t.includes("waterstof"));
+
   if (hasWaterstof) return "Waterstof";
+
   if (hasElektrisch && (hasBenzine || hasDiesel)) {
-    if (hybridClass.includes("OVC-HEV") || hybridClass.includes("OVC-FCHEV")) {
-      return hasDiesel ? "Diesel / Plug-in Hybride (PHEV)" : "Benzine / Plug-in Hybride (PHEV)";
-    }
-    if (hybridClass.includes("NOVC-HEV")) {
+    if (hybridClass === "NOVC-HEV") {
       return hasDiesel ? "Diesel / Mild Hybride (MHEV)" : "Benzine / Mild Hybride (MHEV)";
+    }
+    if (hybridClass === "OVC-HEV" || hybridClass === "OVC-FCHEV") {
+      return hasDiesel ? "Diesel / Plug-in Hybride (PHEV)" : "Benzine / Plug-in Hybride (PHEV)";
     }
     return hasDiesel ? "Diesel / Elektrisch (Hybride)" : "Benzine / Elektrisch (Hybride)";
   }
+
   if (hasElektrisch) return "Volledig Elektrisch";
   if (hasDiesel) return "Diesel";
   if (hasBenzine) return "Benzine";
