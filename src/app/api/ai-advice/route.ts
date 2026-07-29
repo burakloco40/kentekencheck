@@ -4,32 +4,35 @@ import type { VehicleData } from "@/types/vehicle";
 export async function POST(req: NextRequest) {
   const { vehicle }: { vehicle: VehicleData } = await req.json();
 
-  const prompt = `Je bent een Nederlandse auto-expert met diepgaande kennis van autoforums, Reddit, Tweakers en Autoweek.
+  const prompt = `Je bent een Nederlandse auto-expert met toegang tot fabrieksspecificaties, werkplaatshandboeken en technische documentatie.
 
-Analyseer dit specifieke voertuig:
+Analyseer dit specifieke voertuig HEEL NAUWKEURIG:
 - Merk/Model: ${vehicle.brand} ${vehicle.model}
 - Bouwjaar: ${vehicle.firstAdmissionDateNL ?? "onbekend"}
 - Motor: ${vehicle.engineDisplacement ? vehicle.engineDisplacement + "cc" : ""} ${vehicle.fuelType} ${vehicle.powerHP ? vehicle.powerHP + "pk" : ""}
+- Motorcode: ${vehicle.engineCode ?? "onbekend"}
 - Carrosserie: ${vehicle.bodyStyle ?? "onbekend"}
 - Emissienorm: ${vehicle.emissionLevel ?? "onbekend"}
 - Herkomst: ${vehicle.isImport ? "Import" : "Nederlands"}
 
+BELANGRIJK: Geef EXACTE fabrieksspecificaties voor dit specifieke model en motorvariant. Gebruik het motorvermogen en de motorcode om de juiste specificaties te bepalen. Voor oliecapaciteit: geef de totale vulling inclusief filter zoals vermeld in het werkplaatshandboek.
+
 Geef het volgende terug in dit EXACTE formaat:
 
-KOPPELMOMENT: [Nm waarde voor deze specifieke motorvariant]
+KOPPELMOMENT: [exacte Nm waarde bij specifiek toerental bijv. 250 Nm @ 1750 rpm]
 BANDENMAAT_VOOR: [standaard voorbandenmaat bijv. 205/55R16]
-BANDENMAAT_ACHTER: [standaard achterbandenmaat bijv. 225/50R16, of ZELFDE als voor- en achterbanden gelijk zijn]
+BANDENMAAT_ACHTER: [standaard achterbandenmaat of ZELFDE]
 AANDRIJVING: [FWD, RWD of AWD]
 TURBO: [Ja of Nee]
-BAGAGERUIMTE: [bagageruimte in liters]
-TOPSNELHEID: [topsnelheid in km/h]
-NULHONDERD: [0-100 km/h tijd in seconden]
-OLIETYPE: [aanbevolen motorolie type bijv. 5W30]
-OLIECAPACITEIT: [oliecapaciteit in liters]
-OLIEVERVERSING: [vervangingsinterval in km bijv. 15000 km of 1 jaar]
-ONDERHOUDSKOSTEN: [geschatte jaarlijkse onderhoudskosten in euros voor Nederlands gebruik]
-FACELIFT: [jaar van facelift of generatiewijziging, of "Geen" indien niet van toepassing]
-AFSCHRIJVING: [geschatte afschrijving per jaar in procenten]
+BAGAGERUIMTE: [bagageruimte in liters volgens fabrieksopgave]
+TOPSNELHEID: [topsnelheid in km/h volgens fabrieksopgave]
+NULHONDERD: [0-100 km/h tijd in seconden volgens fabrieksopgave]
+OLIETYPE: [exacte oliespeficicatie bijv. 5W-30 ACEA C3]
+OLIECAPACITEIT: [exacte oliecapaciteit inclusief filter in liters volgens werkplaatshandboek, bijv. 5,7 liter]
+OLIEVERVERSING: [officieel vervangingsinterval bijv. 15.000 km of 1 jaar]
+ONDERHOUDSKOSTEN: [geschatte jaarlijkse onderhoudskosten in euros]
+FACELIFT: [jaar van facelift of "Geen"]
+AFSCHRIJVING: [afschrijving per jaar in procenten]
 
 BEKENDE PROBLEMEN:
 - [specifiek probleem 1 met componentnaam]
@@ -46,7 +49,7 @@ WAAR OP LETTEN BIJ AANKOOP:
 
 ONDERHOUDSADVIES: [specifieke onderhoudspunten voor dit model]
 
-Schrijf in het Nederlands. Wees specifiek en noem echte technische componenten.`;
+Schrijf in het Nederlands. Wees zo nauwkeurig mogelijk. Raadpleeg je kennis van officiële werkplaatshandboeken.`;
 
   try {
     const response = await fetch("https://api.groq.com/openai/v1/chat/completions", {
