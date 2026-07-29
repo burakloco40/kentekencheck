@@ -27,10 +27,49 @@ async function getData(plate: string): Promise<VehicleResult> {
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { kenteken } = await params;
-  const display = formatPlateDisplay(normalizePlate(kenteken));
+  const normalized = normalizePlate(kenteken);
+  const display = formatPlateDisplay(normalized);
+
+  try {
+    const result = await getData(normalized);
+    if (result.success && result.data) {
+      const v = result.data;
+      const title = `Kenteken ${display} — ${v.brand} ${v.model}`;
+      const description = `${v.brand} ${v.model} uit ${v.firstAdmissionDateNL ?? "onbekend"}. ${v.fuelType}${v.powerHP ? ", " + v.powerHP + " pk" : ""}. APK tot ${v.apkExpiryDateNL ?? "onbekend"}. Bekijk alle voertuiggegevens op kentekenrdwcheck.nl`;
+
+      return {
+        title,
+        description,
+        openGraph: {
+          title,
+          description,
+          url: `https://kentekenrdwcheck.nl/voertuig/${normalized}`,
+          siteName: "Kentekenrdwcheck",
+          locale: "nl_NL",
+          type: "website",
+          images: [
+            {
+              url: "https://kentekenrdwcheck.nl/og-image.png",
+              width: 1200,
+              height: 630,
+              alt: `Kenteken ${display}`,
+            },
+          ],
+        },
+        twitter: {
+          card: "summary_large_image",
+          title,
+          description,
+        },
+      };
+    }
+  } catch {
+    // fallback
+  }
+
   return {
-    title: "Kenteken " + display,
-    description: "Voertuiggegevens voor " + display,
+    title: `Kenteken ${display}`,
+    description: `Voertuiggegevens voor kenteken ${display} via het officiële RDW register.`,
   };
 }
 
