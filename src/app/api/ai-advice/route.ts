@@ -21,7 +21,12 @@ BANDENMAAT_VOOR: [standaard voorbandenmaat bijv. 205/55R16]
 BANDENMAAT_ACHTER: [standaard achterbandenmaat bijv. 225/50R16, of ZELFDE als voor- en achterbanden gelijk zijn]
 AANDRIJVING: [FWD, RWD of AWD]
 TURBO: [Ja of Nee]
-BAGAGERUIMTE: [bagageruimte in liters, bijv. 286 liter]
+BAGAGERUIMTE: [bagageruimte in liters]
+TOPSNELHEID: [topsnelheid in km/h]
+NULHONDERD: [0-100 km/h tijd in seconden]
+OLIETYPE: [aanbevolen motorolie type bijv. 5W30]
+OLIECAPACITEIT: [oliecapaciteit in liters]
+OLIEVERVERSING: [vervangingsinterval in km bijv. 15000 km of 1 jaar]
 ONDERHOUDSKOSTEN: [geschatte jaarlijkse onderhoudskosten in euros voor Nederlands gebruik]
 FACELIFT: [jaar van facelift of generatiewijziging, of "Geen" indien niet van toepassing]
 AFSCHRIJVING: [geschatte afschrijving per jaar in procenten]
@@ -53,7 +58,7 @@ Schrijf in het Nederlands. Wees specifiek en noem echte technische componenten.`
       body: JSON.stringify({
         model: "llama-3.3-70b-versatile",
         messages: [{ role: "user", content: prompt }],
-        max_tokens: 1000,
+        max_tokens: 1200,
       }),
     });
 

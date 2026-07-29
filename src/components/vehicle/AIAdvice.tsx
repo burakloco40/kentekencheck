@@ -49,6 +49,15 @@ function SpecCard({ label, value, icon }: { label: string; value: string; icon: 
   );
 }
 
+function ServiceRow({ label, value }: { label: string; value: string }) {
+  return (
+    <div style={{display:'flex',alignItems:'center',padding:'10px 0',borderBottom:'1px solid #f3f4f6'}}>
+      <span style={{width:'50%',fontSize:'13px',color:'#6b7280',fontWeight:500}}>{label}</span>
+      <span style={{fontSize:'13px',color:'#111827',fontWeight:600}}>{value}</span>
+    </div>
+  );
+}
+
 export function AIAdvice({ vehicle }: Props) {
   const [advice, setAdvice] = useState<string | null>(null);
   const [specs, setSpecs] = useState<Record<string, string>>({});
@@ -73,6 +82,11 @@ export function AIAdvice({ vehicle }: Props) {
             {key: 'drive', field: 'AANDRIJVING'},
             {key: 'turbo', field: 'TURBO'},
             {key: 'baggage', field: 'BAGAGERUIMTE'},
+            {key: 'topspeed', field: 'TOPSNELHEID'},
+            {key: 'acceleration', field: 'NULHONDERD'},
+            {key: 'oiltype', field: 'OLIETYPE'},
+            {key: 'oilcapacity', field: 'OLIECAPACITEIT'},
+            {key: 'oilinterval', field: 'OLIEVERVERSING'},
             {key: 'maintenance', field: 'ONDERHOUDSKOSTEN'},
             {key: 'facelift', field: 'FACELIFT'},
             {key: 'depreciation', field: 'AFSCHRIJVING'},
@@ -118,6 +132,8 @@ export function AIAdvice({ vehicle }: Props) {
 
   const showTires = tireFront !== null;
   const differentRear = tireRear !== null && tireRear !== tireFront;
+  const hasServiceData = specs.oiltype || specs.oilcapacity || specs.oilinterval;
+  const hasPerformance = specs.topspeed || specs.acceleration;
 
   return (
     <>
@@ -146,15 +162,33 @@ export function AIAdvice({ vehicle }: Props) {
                   <p style={{fontSize:'11px',color:'#9ca3af',margin:'10px 0 0'}}>* Geschatte standaard bandenmaten op basis van model en bouwjaar</p>
                 </div>
               )}
-              <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fill,minmax(150px,1fr))',gap:'10px'}}>
+
+              <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fill,minmax(150px,1fr))',gap:'10px',marginBottom:'16px'}}>
                 {specs.torque && <SpecCard label="Koppelmoment" value={specs.torque} icon="🔧" />}
                 {specs.drive && <SpecCard label="Aandrijving" value={specs.drive} icon="⚙️" />}
                 {specs.turbo && <SpecCard label="Turbo" value={specs.turbo} icon="💨" />}
                 {specs.baggage && <SpecCard label="Bagageruimte" value={specs.baggage} icon="🧳" />}
-                {specs.maintenance && <SpecCard label="Onderhoudskosten/jaar" value={specs.maintenance} icon="🔨" />}
                 {specs.facelift && <SpecCard label="Facelift" value={specs.facelift} icon="✨" />}
                 {specs.depreciation && <SpecCard label="Afschrijving/jaar" value={specs.depreciation} icon="📉" />}
               </div>
+
+              {hasPerformance && (
+                <div style={{marginBottom:'16px',paddingBottom:'16px',borderBottom:'1px solid #f3f4f6'}}>
+                  <div style={{fontSize:'11px',color:'#9ca3af',fontWeight:600,textTransform:'uppercase',letterSpacing:'0.07em',marginBottom:'8px'}}>🏎️ Prestaties</div>
+                  {specs.topspeed && <ServiceRow label="Topsnelheid" value={`${specs.topspeed} km/h`} />}
+                  {specs.acceleration && <ServiceRow label="0-100 km/h" value={`${specs.acceleration} sec`} />}
+                </div>
+              )}
+
+              {hasServiceData && (
+                <div>
+                  <div style={{fontSize:'11px',color:'#9ca3af',fontWeight:600,textTransform:'uppercase',letterSpacing:'0.07em',marginBottom:'8px'}}>🔩 Service & vloeistoffen</div>
+                  {specs.oiltype && <ServiceRow label="Type motorolie" value={specs.oiltype} />}
+                  {specs.oilcapacity && <ServiceRow label="Oliecapaciteit" value={`${specs.oilcapacity} liter`} />}
+                  {specs.oilinterval && <ServiceRow label="Olieverversing" value={specs.oilinterval} />}
+                  {specs.maintenance && <ServiceRow label="Onderhoudskosten/jaar" value={specs.maintenance} />}
+                </div>
+              )}
             </>
           )}
         </div>
