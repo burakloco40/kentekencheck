@@ -4,33 +4,33 @@ import type { VehicleData } from "@/types/vehicle";
 
 interface Props { vehicle: VehicleData; }
 
-function TireVisual({ size }: { size: string }) {
+function TireVisual({ size, label }: { size: string; label: string }) {
   const match = size.match(/(\d+)\/(\d+)R(\d+)/);
-  if (!match) return <span style={{fontSize:'18px',fontWeight:700,color:'#111827'}}>{size}</span>;
+  if (!match) return null;
   const width = match[1];
   const height = match[2];
   const rim = match[3];
 
   return (
     <div>
-      <div style={{marginBottom:'10px'}}>
-        <span style={{fontSize:'18px',fontWeight:800,color:'#0f2040'}}>{size}</span>
+      <div style={{fontSize:'12px',color:'#6b7280',fontWeight:600,marginBottom:'6px'}}>{label}</div>
+      <div style={{marginBottom:'8px'}}>
+        <span style={{fontSize:'16px',fontWeight:800,color:'#0f2040'}}>{size}</span>
       </div>
-      <div style={{display:'flex',gap:'10px',alignItems:'flex-end'}}>
+      <div style={{display:'flex',gap:'8px',alignItems:'flex-end'}}>
         {[
           {label:'Breedte', value: width, unit: 'mm'},
           {label:'Hoogte', value: height, unit: '%'},
           {label:'Velg', value: `R${rim}`, unit: ''},
         ].map(item => (
           <div key={item.label} style={{textAlign:'center'}}>
-            <div style={{background:'#F5C518',color:'#0f2040',borderRadius:'6px',padding:'4px 10px',fontWeight:700,fontSize:'13px',marginBottom:'4px'}}>
+            <div style={{background:'#F5C518',color:'#0f2040',borderRadius:'6px',padding:'3px 8px',fontWeight:700,fontSize:'12px',marginBottom:'3px'}}>
               {item.value}{item.unit}
             </div>
-            <div style={{fontSize:'11px',color:'#6b7280'}}>{item.label}</div>
+            <div style={{fontSize:'10px',color:'#6b7280'}}>{item.label}</div>
           </div>
         ))}
       </div>
-      <p style={{fontSize:'11px',color:'#9ca3af',margin:'8px 0 0'}}>* Geschatte standaard bandenmaat op basis van model en bouwjaar</p>
     </div>
   );
 }
@@ -52,7 +52,8 @@ function SpecCard({ label, value, icon }: { label: string; value: string; icon: 
 export function AIAdvice({ vehicle }: Props) {
   const [advice, setAdvice] = useState<string | null>(null);
   const [specs, setSpecs] = useState<Record<string, string>>({});
-  const [tireSize, setTireSize] = useState<string | null>(null);
+  const [tireFront, setTireFront] = useState<string | null>(null);
+  const [tireRear, setTireRear] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -87,10 +88,17 @@ export function AIAdvice({ vehicle }: Props) {
             }
           }
 
-          const tire = extractField(full, 'BANDENMAAT');
-          if (tire) {
-            setTireSize(tire);
-            cleaned = cleaned.replace(/BANDENMAAT:[^\n]+\n?/, '');
+          const front = extractField(full, 'BANDENMAAT_VOOR');
+          const rear = extractField(full, 'BANDENMAAT_ACHTER');
+          if (front) {
+            setTireFront(front);
+            cleaned = cleaned.replace(/BANDENMAAT_VOOR:[^\n]+\n?/, '');
+          }
+          if (rear && rear.toUpperCase() !== 'ZELFDE') {
+            setTireRear(rear);
+            cleaned = cleaned.replace(/BANDENMAAT_ACHTER:[^\n]+\n?/, '');
+          } else {
+            cleaned = cleaned.replace(/BANDENMAAT_ACHTER:[^\n]+\n?/, '');
           }
 
           setSpecs(extracted);
@@ -107,6 +115,9 @@ export function AIAdvice({ vehicle }: Props) {
     getAdvice();
   }, [vehicle]);
 
+  const showTires = tireFront !== null;
+  const differentRear = tireRear !== null && tireRear !== tireFront;
+
   return (
     <>
       <div style={{background:'white',border:'1px solid #e5e7eb',borderRadius:'14px',overflow:'hidden'}}>
@@ -122,10 +133,16 @@ export function AIAdvice({ vehicle }: Props) {
             </div>
           ) : (
             <>
-              {tireSize && (
+              {showTires && (
                 <div style={{marginBottom:'16px',paddingBottom:'16px',borderBottom:'1px solid #f3f4f6'}}>
-                  <div style={{fontSize:'11px',color:'#9ca3af',fontWeight:600,textTransform:'uppercase',letterSpacing:'0.07em',marginBottom:'8px'}}>🔵 Bandenmaat</div>
-                  <TireVisual size={tireSize} />
+                  <div style={{fontSize:'11px',color:'#9ca3af',fontWeight:600,textTransform:'uppercase',letterSpacing:'0.07em',marginBottom:'12px'}}>🔵 Bandenmaten</div>
+                  <div style={{display:'flex',gap:'24px',flexWrap:'wrap'}}>
+                    <TireVisual size={tireFront!} label={differentRear ? "Voorbanden" : "Voor- en achterbanden"} />
+                    {differentRear && tireRear && (
+                      <TireVisual size={tireRear} label="Achterbanden" />
+                    )}
+                  </div>
+                  <p style={{fontSize:'11px',color:'#9ca3af',margin:'10px 0 0'}}>* Geschatte standaard bandenmaten op basis van model en bouwjaar</p>
                 </div>
               )}
               <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fill,minmax(150px,1fr))',gap:'10px'}}>

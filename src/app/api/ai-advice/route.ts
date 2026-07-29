@@ -16,7 +16,8 @@ Analyseer dit specifieke voertuig:
 Geef het volgende terug in dit EXACTE formaat:
 
 KOPPELMOMENT: [Nm waarde voor deze specifieke motorvariant]
-BANDENMAAT: [standaard bandenmaat bijv. 195/65R15]
+BANDENMAAT_VOOR: [standaard voorbandenmaat bijv. 205/55R16]
+BANDENMAAT_ACHTER: [standaard achterbandenmaat bijv. 225/50R16, of ZELFDE als voor- en achterbanden gelijk zijn]
 AANDRIJVING: [FWD, RWD of AWD]
 TURBO: [Ja of Nee]
 ONDERHOUDSKOSTEN: [geschatte jaarlijkse onderhoudskosten in euros voor Nederlands gebruik]
