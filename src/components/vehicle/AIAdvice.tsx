@@ -72,6 +72,7 @@ export function AIAdvice({ vehicle }: Props) {
             {key: 'torque', field: 'KOPPELMOMENT'},
             {key: 'drive', field: 'AANDRIJVING'},
             {key: 'turbo', field: 'TURBO'},
+            {key: 'baggage', field: 'BAGAGERUIMTE'},
             {key: 'maintenance', field: 'ONDERHOUDSKOSTEN'},
             {key: 'facelift', field: 'FACELIFT'},
             {key: 'depreciation', field: 'AFSCHRIJVING'},
@@ -149,6 +150,7 @@ export function AIAdvice({ vehicle }: Props) {
                 {specs.torque && <SpecCard label="Koppelmoment" value={specs.torque} icon="🔧" />}
                 {specs.drive && <SpecCard label="Aandrijving" value={specs.drive} icon="⚙️" />}
                 {specs.turbo && <SpecCard label="Turbo" value={specs.turbo} icon="💨" />}
+                {specs.baggage && <SpecCard label="Bagageruimte" value={specs.baggage} icon="🧳" />}
                 {specs.maintenance && <SpecCard label="Onderhoudskosten/jaar" value={specs.maintenance} icon="🔨" />}
                 {specs.facelift && <SpecCard label="Facelift" value={specs.facelift} icon="✨" />}
                 {specs.depreciation && <SpecCard label="Afschrijving/jaar" value={specs.depreciation} icon="📉" />}

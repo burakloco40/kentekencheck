@@ -10,6 +10,7 @@ Analyseer dit specifieke voertuig:
 - Merk/Model: ${vehicle.brand} ${vehicle.model}
 - Bouwjaar: ${vehicle.firstAdmissionDateNL ?? "onbekend"}
 - Motor: ${vehicle.engineDisplacement ? vehicle.engineDisplacement + "cc" : ""} ${vehicle.fuelType} ${vehicle.powerHP ? vehicle.powerHP + "pk" : ""}
+- Carrosserie: ${vehicle.bodyStyle ?? "onbekend"}
 - Emissienorm: ${vehicle.emissionLevel ?? "onbekend"}
 - Herkomst: ${vehicle.isImport ? "Import" : "Nederlands"}
 
@@ -20,6 +21,7 @@ BANDENMAAT_VOOR: [standaard voorbandenmaat bijv. 205/55R16]
 BANDENMAAT_ACHTER: [standaard achterbandenmaat bijv. 225/50R16, of ZELFDE als voor- en achterbanden gelijk zijn]
 AANDRIJVING: [FWD, RWD of AWD]
 TURBO: [Ja of Nee]
+BAGAGERUIMTE: [bagageruimte in liters, bijv. 286 liter]
 ONDERHOUDSKOSTEN: [geschatte jaarlijkse onderhoudskosten in euros voor Nederlands gebruik]
 FACELIFT: [jaar van facelift of generatiewijziging, of "Geen" indien niet van toepassing]
 AFSCHRIJVING: [geschatte afschrijving per jaar in procenten]
