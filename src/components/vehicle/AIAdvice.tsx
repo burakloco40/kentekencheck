@@ -132,7 +132,7 @@ export function AIAdvice({ vehicle }: Props) {
 
   const showTires = tireFront !== null;
   const differentRear = tireRear !== null && tireRear !== tireFront;
-  const hasServiceData = specs.oiltype || specs.oilcapacity || specs.oilinterval;
+  const hasServiceData = specs.oiltype || specs.oilcapacity || specs.oilinterval || specs.maintenance;
   const hasPerformance = specs.topspeed || specs.acceleration;
 
   return (
@@ -175,16 +175,16 @@ export function AIAdvice({ vehicle }: Props) {
               {hasPerformance && (
                 <div style={{marginBottom:'16px',paddingBottom:'16px',borderBottom:'1px solid #f3f4f6'}}>
                   <div style={{fontSize:'11px',color:'#9ca3af',fontWeight:600,textTransform:'uppercase',letterSpacing:'0.07em',marginBottom:'8px'}}>🏎️ Prestaties</div>
-                  {specs.topspeed && <ServiceRow label="Topsnelheid" value={`${specs.topspeed} km/h`} />}
-                  {specs.acceleration && <ServiceRow label="0-100 km/h" value={`${specs.acceleration} sec`} />}
+                  {specs.topspeed && <ServiceRow label="Topsnelheid" value={specs.topspeed} />}
+                  {specs.acceleration && <ServiceRow label="0-100 km/h" value={specs.acceleration} />}
                 </div>
               )}
 
               {hasServiceData && (
                 <div>
-                  <div style={{fontSize:'11px',color:'#9ca3af',fontWeight:600,textTransform:'uppercase',letterSpacing:'0.07em',marginBottom:'8px'}}>🔩 Service & vloeistoffen</div>
+                  <div style={{fontSize:'11px',color:'#9ca3af',fontWeight:600,textTransform:'uppercase',letterSpacing:'0.07em',marginBottom:'8px'}}>🔩 Service en vloeistoffen</div>
                   {specs.oiltype && <ServiceRow label="Type motorolie" value={specs.oiltype} />}
-                  {specs.oilcapacity && <ServiceRow label="Oliecapaciteit" value={`${specs.oilcapacity} liter`} />}
+                  {specs.oilcapacity && <ServiceRow label="Oliecapaciteit" value={specs.oilcapacity} />}
                   {specs.oilinterval && <ServiceRow label="Olieverversing" value={specs.oilinterval} />}
                   {specs.maintenance && <ServiceRow label="Onderhoudskosten/jaar" value={specs.maintenance} />}
                 </div>
