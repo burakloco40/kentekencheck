@@ -7,7 +7,28 @@ import Script from "next/script";
 export const metadata: Metadata = {
   title: { default: "Kentekencheck — Voertuiggegevens opzoeken", template: "%s | Kentekencheck" },
   description: "Gratis Nederlands kenteken opzoeken. Bekijk merk, model, APK-vervaldatum, brandstof, vermogen en meer.",
-  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL ?? "https://kentekenrdwcheck.nl"),
+  metadataBase: new URL("https://kentekenrdwcheck.nl"),
+  openGraph: {
+    type: "website",
+    locale: "nl_NL",
+    siteName: "Kentekenrdwcheck",
+    title: "Kentekencheck — Gratis Nederlands kenteken opzoeken",
+    description: "Gratis Nederlands kenteken opzoeken. Bekijk APK, brandstof, vermogen en meer via het officiële RDW register.",
+    url: "https://kentekenrdwcheck.nl",
+    images: [
+      {
+        url: "https://kentekenrdwcheck.nl/og-image.png",
+        width: 1200,
+        height: 630,
+        alt: "Kentekencheck — Gratis voertuiggegevens",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Kentekencheck — Gratis Nederlands kenteken opzoeken",
+    description: "Gratis Nederlands kenteken opzoeken via het officiële RDW register.",
+  },
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
