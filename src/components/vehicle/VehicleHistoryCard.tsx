@@ -6,17 +6,18 @@ interface Props { vehicle: VehicleData; }
 const btnStyle: React.CSSProperties = {
   display: 'block',
   textAlign: 'center',
-  background: '#F5C518',
-  color: '#0f2040',
+  background: '#0070f3',
+  color: 'white',
   padding: '12px 24px',
   borderRadius: '10px',
   fontWeight: 700,
   fontSize: '14px',
   textDecoration: 'none',
+  marginTop: '12px',
 };
 
 export function VehicleHistoryCard({ vehicle }: Props) {
- const affiliateUrl = `https://www.carvertical.deal/2GKDGZK/CT4G5Z/?source_id=AFF&sub1=kentekenrdwcheck&plate=${vehicle.plateRaw}&country=nl`;
+  const affiliateUrl = `https://www.carvertical.deal/2GKDGZK/CT4G5Z/?source_id=AFF&sub1=kentekenrdwcheck&plate=${vehicle.plateRaw}&country=nl`;
 
   return (
     <div style={{borderRadius:'14px',overflow:'hidden',border:'2px solid #e5e7eb',boxShadow:'0 2px 8px rgba(0,0,0,0.08)'}}>
@@ -27,25 +28,18 @@ export function VehicleHistoryCard({ vehicle }: Props) {
           <p style={{fontSize:'12px',color:'rgba(255,255,255,0.6)',margin:0}}>Ontdek wat de RDW niet toont</p>
         </div>
       </div>
-      <div style={{background:'white',padding:'20px'}}>
-        <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:'12px',marginBottom:'20px'}}>
-          {[
-            {icon:'💥', label:'Schadehistorie'},
-            {icon:'📍', label:'Kilometerstand verificatie'},
-            {icon:'🌍', label:'Internationale geschiedenis'},
-            {icon:'👤', label:'Aantal vorige eigenaren'},
-            {icon:'🔧', label:'Onderhoudshistorie'},
-            {icon:'🚨', label:'Gestolen voertuig check'},
-          ].map(item => (
-            <div key={item.label} style={{display:'flex',alignItems:'center',gap:'8px'}}>
-              <span style={{fontSize:'16px'}}>{item.icon}</span>
-              <span style={{fontSize:'13px',color:'#374151',fontWeight:500}}>{item.label}</span>
-            </div>
-          ))}
+      <div style={{background:'white',padding:'16px'}}>
+        <a href={affiliateUrl} target="_blank" rel="noopener noreferrer">
+          <img
+            src="/BE-NL_160x600.png"
+            alt="carVertical — Controleer de echte staat van een auto"
+            style={{width:'100%',borderRadius:'8px',display:'block'}}
+          />
+        </a>
+        <div style={{background:'#fff3cd',border:'1px solid #ffc107',borderRadius:'8px',padding:'10px 14px',marginTop:'12px',textAlign:'center'}}>
+          <p style={{fontSize:'13px',fontWeight:700,color:'#856404',margin:0}}>🎉 Exclusief 20% korting</p>
+          <p style={{fontSize:'12px',color:'#856404',margin:'4px 0 0'}}>Via onze link automatisch toegepast</p>
         </div>
-        <p style={{fontSize:'12px',color:'#9ca3af',margin:'0 0 16px',lineHeight:'1.6'}}>
-          De gratis RDW data geeft een goed beeld, maar voor een complete voertuighistorie raden wij een rapport aan via carVertical.
-        </p>
         <a href={affiliateUrl} target="_blank" rel="noopener noreferrer" style={btnStyle}>
           Bekijk volledige voertuighistorie
         </a>
