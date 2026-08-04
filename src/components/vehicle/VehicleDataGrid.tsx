@@ -4,7 +4,6 @@ import { formatPrice } from "@/lib/utils/formatters";
 import { AIAdvice } from "./AIAdvice";
 import { APKHistory } from "./APKHistory";
 import { RecallActions } from "./RecallActions";
-import { VehicleHistoryCard } from "./VehicleHistoryCard";
 
 interface Props { vehicle: VehicleData; }
 
@@ -90,7 +89,7 @@ export function VehicleDataGrid({ vehicle }: Props) {
       <Section title="Motor en Techniek" emoji="⚙️" rows={[
         {label:'Brandstof', value: vehicle.fuelType},
         {label:'Vermogen', value: vehicle.powerHP, unit: 'pk'},
-        {label:'Vermogen', value: vehicle.powerKW, unit: 'kW'},
+        {label:'Vermogen kW', value: vehicle.powerKW, unit: 'kW'},
         {label:'Cilinderinhoud', value: vehicle.engineDisplacement, unit: 'cc'},
         {label:'Cilinders', value: vehicle.numberOfCylinders},
         {label:'Motorcode', value: vehicle.engineCode},
@@ -130,8 +129,6 @@ export function VehicleDataGrid({ vehicle }: Props) {
       ]} />
 
       <APKHistory history={vehicle.apkHistory} apkExpiryDateNL={vehicle.apkExpiryDateNL} />
-
-      <VehicleHistoryCard vehicle={vehicle} />
 
       <AIAdvice vehicle={vehicle} />
 

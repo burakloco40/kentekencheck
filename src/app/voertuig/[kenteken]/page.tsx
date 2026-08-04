@@ -112,7 +112,7 @@ export default async function Page({ params }: PageProps) {
           <div style={{marginBottom:'16px'}}>
             <VehicleHeader vehicle={vehicle} />
           </div>
-          <div style={{display:'grid',gridTemplateColumns:'1fr 340px',gap:'20px',alignItems:'start'}}>
+          <div style={{display:'grid',gridTemplateColumns:'1fr 180px',gap:'20px',alignItems:'start'}}>
             <div>
               <VehicleDataGrid vehicle={vehicle} />
             </div>
